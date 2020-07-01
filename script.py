@@ -1,11 +1,20 @@
 import pandas as pd
-from xlrd import *
-import numpy as np
 import sqlite3
 from sqlite3 import Error
 import time
+import tkinter as tk
+from tkinter import filedialog
 
-bankFile=pd.read_excel(r'C:\Users\mufit\Downloads\/relevedescomptes.xlsx',usecols='C,D,G',skiprows=[0,1,2,3,4,5])
+
+root=tk.Tk()
+
+root.withdraw()
+
+file_path = filedialog.askopenfilename(title="Select a file !!")
+
+print(file_path)
+
+bankFile=pd.read_excel(r'{}'.format(file_path),usecols='C,D,G',skiprows=[0,1,2,3,4,5])
 bankFile.dropna(inplace=True)
 pd.set_option('display.max_columns',None)
 
@@ -56,6 +65,14 @@ def delete_customer():
     conn.execute(sql3)
     conn.commit()
 
+def see_saved():
+    sql4="select t_date,t_spent from table_nourriture"
+    data=conn.execute(sql4)
+    for i in data.fetchall():
+
+        print(', '.join(map(str,i)))
+
+
 def add_delete():
     in1 = input("Do you want to add or delete company? (add/delete/n): ")
 
@@ -87,13 +104,11 @@ def spent():
 
     for i in sub:
         operation_Name=data[data['Operation'].str.contains(i)]
-        #print(operation_Name["Amount"])
         amounts=operation_Name["Amount"]
 
-        #print(amounts)
+
         for row in amounts:
             LIST.append(row)
-            #print(row)
 
     global amountTotal
     amountTotal=round(sum(LIST),2)
@@ -107,7 +122,6 @@ def spent():
     else:
         exit(0)
 
-#print(data[data['Operation'].str.contains(sub)])
 
 def menu():
     menuChoice=input("Go to customer/provider options? (y/n): ")
@@ -126,6 +140,12 @@ def menu():
         print("Calculation will start...")
         time.sleep(5)
         spent()
+        time.sleep(5)
+        choice_see_saved=input("Do you want to see previous spendigns ? (y/n):")
+        if choice_see_saved == 'y' or choice_see_saved =='Y':
+            see_saved()
+        else:
+            exit(0)
 
 
 
@@ -134,5 +154,6 @@ def menu():
 
 if __name__ == '__main__':
     menu()
+
     conn.close()
 
