@@ -120,7 +120,7 @@ def spent():
         insert_data()
         print("Data has been saved...")
     else:
-        exit(0)
+        pass
 
 
 def menu():
