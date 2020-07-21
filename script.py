@@ -1,3 +1,5 @@
+import datetime
+
 import pandas as pd
 import sqlite3
 from sqlite3 import Error
@@ -14,7 +16,7 @@ file_path = filedialog.askopenfilename(title="Select a file !!")
 
 print(file_path)
 
-bankFile=pd.read_excel(r'{}'.format(file_path),usecols='C,D,G',skiprows=[0,1,2,3,4,5])
+bankFile=pd.read_excel(r'{}'.format(file_path),usecols='C,E,G',skiprows=[0,1,2,3,4,5])
 bankFile.dropna(inplace=True)
 pd.set_option('display.max_columns',None)
 
@@ -48,7 +50,8 @@ for a in sub_list:
 
 def insert_data():
 
-    dt = bankFile["Date"].tail(1)
+    dt = bankFile["Value Date"].tail(1)
+
     for a in dt:
         sql1="insert into table_nourriture values(NULL,'{}','{}')".format(a,amountTotal)
 
