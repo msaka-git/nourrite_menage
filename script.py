@@ -1,5 +1,4 @@
 import datetime
-
 import pandas as pd
 import sqlite3
 from sqlite3 import Error
@@ -48,7 +47,7 @@ for a in sub_list:
         sub.append(b)
 
 ###### LOGGING CONSTRUCTOR #####################
-logger = logging.getLogger('HATA')
+logger = logging.getLogger()
 
 #############################################
 
