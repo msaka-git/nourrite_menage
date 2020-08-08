@@ -6,7 +6,7 @@ from sqlite3 import Error
 import time
 import tkinter as tk
 from tkinter import filedialog
-
+import logging
 
 root=tk.Tk()
 
@@ -46,6 +46,11 @@ for a in sub_list:
     for b in a:
 
         sub.append(b)
+
+###### LOGGING CONSTRUCTOR #####################
+logger = logging.getLogger('HATA')
+
+#############################################
 
 
 def insert_data():
@@ -94,7 +99,8 @@ def add_delete():
     elif in1 == 'n' or in1 == 'N':
         spent()
 
-
+    else:
+        logger.warning("Islem bulunamadi. Cikis yapiliyor...")
 
 def spent():
 
