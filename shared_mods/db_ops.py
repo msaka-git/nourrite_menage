@@ -203,12 +203,20 @@ def spent_shopping():
 def spent_liesure_others():
     value_all=['PURCHASE']
 
-
     data = bankFile.sort_values("Operation")
     LISTe = []
+################ Start investment amount
 
+    invest=data[data['Operation'].str.contains('ING ARIA')]
+    amount_invest=invest["Amount"]
+    amount_invest=[i for i in amount_invest]
+    fl_amount_invest=float(amount_invest[0])
+
+
+########### END investment amount
     for imm in value_all:
         operation_Namer = data[data['Operation'].str.contains(imm)]
+
         amounts = operation_Namer["Amount"]
 
         for row in amounts:
@@ -219,7 +227,9 @@ def spent_liesure_others():
     amountTotal_all=round(sum(LISTe),2)
 
 
-    amount_spent_lieure_other=(-(amountTotal_all-amountTotal_shopping-amountTotal_food))
-    print("\nThe amount that you paid for liesure and others is: ", -amount_spent_lieure_other)
+    amount_spent_lieure_other=(-(amountTotal_all-amountTotal_shopping-amountTotal_food-fl_amount_invest))
+    print("\nThe amount spent in investment: ", round(fl_amount_invest, 2))
+    print("\nThe amount that you paid for liesure and others is: ", -round(amount_spent_lieure_other,2))
+
 
 
