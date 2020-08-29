@@ -73,7 +73,7 @@ class mainscript:
                 choice = input("Do you want to see company list? (y/n) : ")
                 if choice == 'y' or choice == 'Y':
                     print(dbn.sub_sh)
-                    logger.warning("{} : no such option.".format(menuChoice))
+
 
                     dbn.add_delete_shopping()
 
