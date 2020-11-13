@@ -106,6 +106,7 @@ def spent():
         for row in amounts:
             LIST.append(row)
 
+
     global amountTotal_food
     amountTotal_food = round(sum(LIST), 2)
     print("\nThe amount that you paid for food is: ", amountTotal_food)
@@ -202,15 +203,33 @@ def spent_shopping():
 
 def spent_liesure_others():
     value_all=['PURCHASE']
-
+    #value_sell=['SALE']
     data = bankFile.sort_values("Operation")
     LISTe = []
 ################ Start investment amount
 
     invest=data[data['Operation'].str.contains('ING ARIA')]
+    #print(invest)
     amount_invest=invest["Amount"]
+
+
     amount_invest=[i for i in amount_invest]
-    fl_amount_invest=float(amount_invest[0])
+    for amount in amount_invest:
+        if amount > 0:
+            amount_invest.remove(amount)
+    #global amount_invest
+            #return amount_invest
+    ind=len(amount_invest)
+    for INDEX in range(ind):
+        #print(INDEX)
+
+
+
+        #print("amount invest: ", amount_invest)
+        global fl_amount_invest
+        fl_amount_invest = float(sum(amount_invest))
+        #return fl_amount_invest
+    #fl_amount_invest=float(amount_invest[0])
 
 
 ########### END investment amount
@@ -225,9 +244,10 @@ def spent_liesure_others():
 
     global amountTotal_all
     amountTotal_all=round(sum(LISTe),2)
-
+    #print("amount total all: ", amountTotal_all)
 
     amount_spent_lieure_other=(-(amountTotal_all-amountTotal_shopping-amountTotal_food-fl_amount_invest))
+    #print("amount_spent_lieure_other: ", amount_spent_lieure_other)
     print("\nThe amount spent in investment: ", round(fl_amount_invest, 2))
     print("\nThe amount that you paid for liesure and others is: ", -round(amount_spent_lieure_other,2))
 
