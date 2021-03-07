@@ -209,18 +209,25 @@ def spent_liesure_others():
     LISTe = []
 ################ Start investment amount
 
-    invest=data[data['Operation'].str.contains('ING ARIA',flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)]
+    invest=data[data['Operation'].str.contains('ING ARIA',flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)] # selects row with item
     #print(invest)
-    amount_invest=invest["Amount"]
 
+    if invest.empty:
+        amount_invest=[0]
+    else:
+        amount_invest=invest["Amount"] # returns amaount of the item
 
     amount_invest=[i for i in amount_invest]
+
     for amount in amount_invest:
         if amount > 0:
             amount_invest.remove(amount)
+
     #global amount_invest
             #return amount_invest
+
     ind=len(amount_invest)
+
     for INDEX in range(ind):
         #print(INDEX)
 
@@ -229,6 +236,7 @@ def spent_liesure_others():
         #print("amount invest: ", amount_invest)
         global fl_amount_invest
         fl_amount_invest = float(sum(amount_invest))
+
         #return fl_amount_invest
     #fl_amount_invest=float(amount_invest[0])
 
