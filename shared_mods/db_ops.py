@@ -2,6 +2,7 @@
 from shared_mods.connection_module import conn,cur
 from script import mainscript
 from shared_mods.logger_module import logger
+import re
 
 amountTotal_food=float(0)
 amountTotal_shopping=float(0)
@@ -23,7 +24,7 @@ sub_list = [list(i) for i in sub_fetch]
 sub = []
 for a in sub_list:
     for b in a:
-        sub.append(b)
+        sub.append(b.lower()) # converts provider name from database to lower case.
 
 ## SQL QUERIES FOR SHOPPING ##
 
@@ -38,7 +39,7 @@ sub_sh = []
 for a in sub_list_sh:
 
     for b in a:
-        sub_sh.append(b)
+        sub_sh.append(b.lower()) #converts provider name from database to lower case.
 
 
 
@@ -100,7 +101,7 @@ def spent():
     LIST = []
 
     for i in sub:
-        operation_Name = data[data['Operation'].str.contains(i)]
+        operation_Name = data[data['Operation'].str.contains(i,flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.
         amounts = operation_Name["Amount"]
 
         for row in amounts:
@@ -181,7 +182,7 @@ def spent_shopping():
     LIST = []
 
     for i in sub_sh:
-        operation_Name = data[data['Operation'].str.contains(i)]
+        operation_Name = data[data['Operation'].str.contains(i,flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)]
         amounts = operation_Name["Amount"]
 
         for row in amounts:
@@ -208,7 +209,7 @@ def spent_liesure_others():
     LISTe = []
 ################ Start investment amount
 
-    invest=data[data['Operation'].str.contains('ING ARIA')]
+    invest=data[data['Operation'].str.contains('ING ARIA',flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)]
     #print(invest)
     amount_invest=invest["Amount"]
 
@@ -234,7 +235,7 @@ def spent_liesure_others():
 
 ########### END investment amount
     for imm in value_all:
-        operation_Namer = data[data['Operation'].str.contains(imm)]
+        operation_Namer = data[data['Operation'].str.contains(imm,flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)]
 
         amounts = operation_Namer["Amount"]
 
