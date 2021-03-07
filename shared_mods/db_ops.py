@@ -1,4 +1,3 @@
-
 from shared_mods.connection_module import conn,cur
 from script import mainscript
 from shared_mods.logger_module import logger
@@ -40,8 +39,6 @@ for a in sub_list_sh:
 
     for b in a:
         sub_sh.append(b.lower()) #converts provider name from database to lower case.
-
-
 
 def insert_data():
 
@@ -212,44 +209,27 @@ def spent_liesure_others():
     invest=data[data['Operation'].str.contains('ING ARIA',flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)] # selects row with item
     #print(invest)
 
-    if invest.empty:
-        amount_invest=[0]
-    else:
-        amount_invest=invest["Amount"] # returns amaount of the item
-
+    amount_invest=[0] if invest.empty else invest["Amount"]
     amount_invest=[i for i in amount_invest]
 
-    for amount in amount_invest:
-        if amount > 0:
-            amount_invest.remove(amount)
+    # for amount in amount_invest:
+    #     if amount > 0:
+    #         amount_invest.remove(amount)
 
     #global amount_invest
             #return amount_invest
 
     ind=len(amount_invest)
-
-    for INDEX in range(ind):
-        #print(INDEX)
-
-
-
-        #print("amount invest: ", amount_invest)
-        global fl_amount_invest
-        fl_amount_invest = float(sum(amount_invest))
-
-        #return fl_amount_invest
-    #fl_amount_invest=float(amount_invest[0])
+    global fl_amount_invest
+    for INDEX in range(ind): fl_amount_invest = float(sum(amount_invest))
 
 
 ########### END investment amount
-    for imm in value_all:
-        operation_Namer = data[data['Operation'].str.contains(imm,flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)]
 
-        amounts = operation_Namer["Amount"]
-
-        for row in amounts:
-
-            LISTe.append(row)
+    global operation_Namer
+    for imm in value_all: operation_Namer = data[data['Operation'].str.contains(imm,flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)]
+    amounts=operation_Namer["Amount"]
+    for row in amounts: LISTe.append(row)
 
     global amountTotal_all
     amountTotal_all=round(sum(LISTe),2)
@@ -259,6 +239,3 @@ def spent_liesure_others():
     #print("amount_spent_lieure_other: ", amount_spent_lieure_other)
     print("\nThe amount spent in investment: ", round(fl_amount_invest, 2))
     print("\nThe amount that you paid for liesure and others is: ", -round(amount_spent_lieure_other,2))
-
-
-
