@@ -20,7 +20,9 @@ rowsa = config['excel_options']['rowsa']
 
 
 class mainscript:
-
+    """ Mainscript to run select window
+        And process Actions """
+    
     def root_win(self):
         root = tk.Tk()
         root.withdraw()
