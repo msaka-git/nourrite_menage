@@ -3,14 +3,15 @@
 {% block body %}
 
 <div class="jumbotron text-center">
-        <h3>Yazılım Bilimi Bloğuna Hoşgeldiniz</h3>
-        <p>Bu blogta geliştiriciler olarak blog yazılarınızı paylaşabilirsiniz ve insanlara yardımcı olabilirsiniz.</p>
+        <h3>Aylik Butce Programi</h3>
+
 </div>
 
 
 <p>
         {% if request.user.is_authenticated %}
                 Giriş Yapılmış, {{request.user.username}}
+                {% include "main_page.html" %}
         {% else %}
                 Giriş Yapılmamış
         {% endif %}

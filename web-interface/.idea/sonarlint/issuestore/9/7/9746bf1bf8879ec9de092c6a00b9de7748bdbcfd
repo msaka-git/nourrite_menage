@@ -1,0 +1,8 @@
+
+opython:S1192&"RDefine a constant instead of duplicating this literal "article:dashboard" 3 times.(È¤º»øÿÿÿÿ
+mpython:S1542"PRename function "addArticle" to match the regular expression ^[a-z_][a-z0-9_]*$.(Î˜ó¢þÿÿÿÿ
+;python:S125)"Remove this commented out code.(°ßÈøÿÿÿÿ
+ppython:S1542."SRename function "updateArticle" to match the regular expression ^[a-z_][a-z0-9_]*$.(ï±Œ»üÿÿÿÿ
+ppython:S1542>"SRename function "deleteArticle" to match the regular expression ^[a-z_][a-z0-9_]*$.(¬âõöúÿÿÿÿ
+wpython:S117M"[Rename this local variable "newComment" to match the regular expression ^[_a-z][a-z0-9_]*$.(™ˆëôÿÿÿÿÿ
+hpython:S1542F"PRename function "addComment" to match the regular expression ^[a-z_][a-z0-9_]*$.(Âò¤„

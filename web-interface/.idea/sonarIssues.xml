@@ -8,6 +8,36 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/article/views.py">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/blog/urls.py">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/templates/articles.html">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/templates/includes/navbar.html">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/templates/index.html">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/templates/main_page.html">
+          <value>
+            <set />
+          </value>
+        </entry>
       </map>
     </option>
   </component>
