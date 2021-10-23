@@ -2,3 +2,5 @@ test.py
 venv/
 *.db
 *.db.bak
+web-interface/*.db
+web-interface/*.db.bak
