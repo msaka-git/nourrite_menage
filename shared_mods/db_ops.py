@@ -221,20 +221,25 @@ def spent_liesure_others():
     global fl_amount_invest
     for INDEX in range(ind): fl_amount_invest = float(sum(amount_invest))
 
-
 ########### END investment amount
 
     global operation_Namer
-    for imm in value_all: operation_Namer = data[data['Operation'].str.contains(imm,flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)]
-    amounts=operation_Namer["Amount"]
+    global operation_Namer_creditCard
+    global amounts
+    purchase_count=data[data['Operation'].str.contains('purchase',flags=re.IGNORECASE)].count()
+    if purchase_count['Operation'] > 0:
+        for imm in value_all: operation_Namer = data[data['Operation'].str.contains(imm,flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)]
+        amounts=operation_Namer["Amount"]
+    else:
+        operation_Namer_creditCard=data[data['Operation'].str.contains("PAYMENT OF VISA|TRANSFER")==False]
+        amounts=operation_Namer_creditCard['Amount']
+
     for row in amounts: LISTe.append(row)
 
-    print(bankFile)
     global amountTotal_all
     amountTotal_all=round(sum(LISTe),2)
-    #print("amount total all: ", amountTotal_all)
 
     amount_spent_lieure_other=(-(amountTotal_all-amountTotal_shopping-amountTotal_food-fl_amount_invest))
-    #print("amount_spent_lieure_other: ", amount_spent_lieure_other)
+
     print("\nThe amount spent in investment: ", round(fl_amount_invest, 2))
     print("\nThe amount that you paid for liesure and others is: ", -round(amount_spent_lieure_other,2))
