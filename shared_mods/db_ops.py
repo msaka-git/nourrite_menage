@@ -129,18 +129,15 @@ def insert_data_shopping():
         cur.execute(sql1)
         conn.commit()
 
-
 def insert_customer_shopping():
     sql2 = "insert into table_customer_shopping values(NULL,'{}')".format(sub_input)
     cur.execute(sql2)
     conn.commit()
 
-
 def delete_customer_shopping():
     sql3 = "delete from table_customer_shopping where t_customer = '{}'".format(choice_del)
     cur.execute(sql3)
     conn.commit()
-
 
 def see_saved_shopping():
     sql4 = "select t_date,t_spent from table_shopping"
