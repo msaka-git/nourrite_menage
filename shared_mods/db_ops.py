@@ -119,8 +119,6 @@ def spent():
 
 #### SHOPPING FUNCTIONS ###################
 
-
-
 def insert_data_shopping():
 
     dt = bankFile["Value Date"].tail(1)
@@ -231,6 +229,7 @@ def spent_liesure_others():
     amounts=operation_Namer["Amount"]
     for row in amounts: LISTe.append(row)
 
+    print(bankFile)
     global amountTotal_all
     amountTotal_all=round(sum(LISTe),2)
     #print("amount total all: ", amountTotal_all)

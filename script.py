@@ -31,7 +31,7 @@ class mainscript:
         return file_path
 
     def file_select(self, file):
-        bankFile = pd.read_excel(r'{}'.format(file), usecols='{}'.format('C,E,G'), skiprows=[0, 1, 2, 3, 4, 5])
+        bankFile = pd.read_excel(r'{}'.format(file), usecols='{}'.format(column), skiprows=[0, 1, 2, 3, 4, 5])
         bankFile.dropna(inplace=True)
         pd.set_option('display.max_columns', None)
         pd.set_option('max_rows', None)
