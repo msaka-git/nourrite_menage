@@ -219,7 +219,7 @@ def spent_liesure_others():
 
     ind=len(amount_invest)
     global fl_amount_invest
-    for INDEX in range(ind): fl_amount_invest = float(sum(amount_invest))
+    for _ in range(ind): fl_amount_invest = float(sum(amount_invest))
 
 ########### END investment amount
 
