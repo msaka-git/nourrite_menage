@@ -1,7 +1,11 @@
+import script
 from shared_mods.connection_module import conn,cur
-from script import mainscript
 from shared_mods.logger_module import logger
 import re
+from script import mainscript
+
+
+
 
 amountTotal_food=float(0)
 amountTotal_shopping=float(0)
@@ -40,9 +44,24 @@ for a in sub_list_sh:
     for b in a:
         sub_sh.append(b.lower()) #converts provider name from database to lower case.
 
-def insert_data():
+dt = bankFile["Value Date"].tail(1)
+data = bankFile.sort_values("Operation")
 
-    dt = bankFile["Value Date"].tail(1)
+def amount_retriever(func):
+    '''
+    Retrieve the amount of a given row.
+    Ex: you want to retrieve the amount of 'orange' telecom expense.
+    '''
+
+    def wrapper(argument):
+        islem = func(argument)
+        expense_data = data[data['Operation'].str.contains(islem,flags=re.IGNORECASE)]
+        expense_amount = [float(i) for i in expense_data['Amount']]
+
+        return expense_amount
+    return wrapper
+
+def insert_data():
 
     for a in dt:
         sql1 = "insert into table_nourriture values(NULL,'{}','{}')".format(a, amountTotal_food)
@@ -94,7 +113,6 @@ def add_delete():
 
 def spent():
 
-    data = bankFile.sort_values("Operation")
     LIST = []
 
     for i in sub:
@@ -115,13 +133,11 @@ def spent():
         print("Data has been saved...")
     else:
         pass
-
+    return amountTotal_food
 
 #### SHOPPING FUNCTIONS ###################
 
 def insert_data_shopping():
-
-    dt = bankFile["Value Date"].tail(1)
 
     for a in dt:
         sql1 = "insert into table_shopping values(NULL,'{}','{}')".format(a, amountTotal_shopping)
@@ -170,7 +186,6 @@ def add_delete_shopping():
 
 def spent_shopping():
 
-    data = bankFile.sort_values("Operation")
     LIST = []
 
     for i in sub_sh:
@@ -191,30 +206,22 @@ def spent_shopping():
         print("Data has been saved...")
     else:
         pass
+    return amountTotal_shopping
 
 ##### Liesure and others #################
 
 def spent_liesure_others():
     value_all=['PURCHASE']
-    #value_sell=['SALE']
-    data = bankFile.sort_values("Operation")
     LISTe = []
 ################ Start investment amount
 
     invest=data[data['Operation'].str.contains('ING ARIA',flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)] # selects row with item
-    #print(invest)
 
     amount_invest=[0] if invest.empty else invest["Amount"]
     amount_invest=[i for i in amount_invest]
 
-    # for amount in amount_invest:
-    #     if amount > 0:
-    #         amount_invest.remove(amount)
-
-    #global amount_invest
-            #return amount_invest
-
     ind=len(amount_invest)
+
     global fl_amount_invest
     for _ in range(ind): fl_amount_invest = float(sum(amount_invest))
 
@@ -240,3 +247,36 @@ def spent_liesure_others():
 
     print("\nThe amount spent in investment: ", round(fl_amount_invest, 2))
     print("\nThe amount that you paid for liesure and others is: ", -round(amount_spent_lieure_other,2))
+    return -round(amount_spent_lieure_other,2)
+
+########## Income /exp balance
+
+@amount_retriever
+def salary(salary):
+    return salary
+
+@amount_retriever
+def telecom_spent(telecom):
+    return telecom
+
+@amount_retriever
+def rent(amount):
+    return amount
+
+def monthly_spent():
+    '''
+    return only expenses. Without investment amount.
+    '''
+    expenses_food = spent()
+    expenses_shopping = spent_shopping()
+    expenses_liesure_other = spent_liesure_others()
+    expenses_rent = sum(rent(script.loyer))
+    expenses_telecom = sum(telecom_spent(script.telecom))
+    income = sum(salary(script.employer))
+
+    expenses_total = expenses_shopping + expenses_food + expenses_liesure_other + expenses_rent + expenses_telecom
+    print(expenses_total)
+    balance = round(income - (-expenses_total),2)
+    print(balance)
+
+

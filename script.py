@@ -16,6 +16,12 @@ column = config['excel_options']['column']
 rowsa = config['excel_options']['rowsa']
 
 ########## END Configuration ########################
+########## LOCAL VARIABLES ##########################
+telecom = "ORANGE"
+employer = "CTG LUXEMBOURG"
+payment = "PAYMENT OF VISA|TRANSFER"
+loyer = "Loyer"
+########## END Local variables ######################
 
 
 class mainscript:
@@ -115,7 +121,8 @@ if __name__ == '__main__':
         print("""
        1.Go to Script
        2.Check saved data
-       3.Exit/Quit
+       3.Check income / exp balance
+       4.Exit/Quit
        """)
         ans = input("What would you like to do? ")
         if ans == "1":
@@ -127,6 +134,11 @@ if __name__ == '__main__':
             print(f'{fore.DARK_GREEN}{style.BOLD}### Old data for food ###{style.RESET}')
             dbn.see_saved()
         elif ans == "3":
+            # print(*dbn.salary(employer))
+            # print(*dbn.telecom_spent(telecom))
+            # print(*dbn.rent(loyer))
+            dbn.monthly_spent()
+        elif ans == "4":
             print("\n Goodbye")
             conn.close()
             break
