@@ -20,7 +20,7 @@ rowsa = config['excel_options']['rowsa']
 telecom = "ORANGE"
 electricity = "SUDSTROUM"
 employer = "CTG LUXEMBOURG"
-payment = "PAYMENT OF VISA|TRANSFER"
+payment = "PAYMENT OF VISA ACCOUNT"
 loyer = "Loyer"
 credit = "NISSAN"
 ########## END Local variables ######################
@@ -149,6 +149,7 @@ if __name__ == '__main__':
             print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',*dbn.salary(employer),f'{style.RESET}')
             print(f"Rent: {fore.RED} ", *dbn.rent(loyer),f'{style.RESET}')
             print(f"Credit: {fore.RED} ", *dbn.credit(credit),f'{style.RESET}')
+            print(f"Credit Card Repayment: {fore.RED} ", *dbn.credit(payment),f'{style.RESET}')
             print(f"Bills (Telecom + electricity): {fore.RED}", dbn.addition(*dbn.telecom_spent(telecom),*dbn.electricity_spent(electricity)),f"{style.RESET}")
             print(f"Total Expenses: {fore.RED}",monthly[2],f"{style.RESET}")
             print(f'Balance: {fore.GREEN}',monthly[1] if monthly[1] >= 0 else f'Balance: {fore.RED}',f'{style.RESET}')

@@ -188,7 +188,7 @@ def monthly_spent():
     '''
     others = spent_liesure_others()
     expenses_total = round(addition(spent("food"),spent("shopping"),others,sum(rent(script.loyer)),sum(telecom_spent(script.telecom)),sum(electricity_spent(script.electricity)),
-                                    sum(credit(script.credit))),2)
+                                    sum(credit(script.credit)),sum(credit(script.payment))),2)
     income = sum(salary(script.employer)) + sum(sale('SALE'))
     balance = round(income - (-expenses_total),2)
     return income,balance,expenses_total
