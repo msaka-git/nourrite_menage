@@ -4,9 +4,6 @@ from shared_mods.logger_module import logger
 import re
 from script import mainscript
 
-
-
-
 amountTotal_food=float(0)
 amountTotal_shopping=float(0)
 
@@ -53,11 +50,11 @@ def amount_retriever(func):
     Ex: you want to retrieve the amount of 'orange' telecom expense.
     '''
 
-    def wrapper(argument):
-        islem = func(argument)
+    def wrapper(*args):
+        islem = func(*args)
         expense_data = data[data['Operation'].str.contains(islem,flags=re.IGNORECASE)]
         expense_amount = [float(i) for i in expense_data['Amount']]
-
+        #print("Expense amount:", expense_amount)
         return expense_amount
     return wrapper
 
@@ -125,14 +122,7 @@ def spent():
 
     global amountTotal_food
     amountTotal_food = round(sum(LIST), 2)
-    print("\nThe amount that you paid for food is: ", amountTotal_food)
 
-    choice_save = input("\nDo you want to save ? (y/n): ")
-    if choice_save == 'y' or choice_save == 'Y':
-        insert_data()
-        print("Data has been saved...")
-    else:
-        pass
     return amountTotal_food
 
 #### SHOPPING FUNCTIONS ###################
@@ -198,58 +188,42 @@ def spent_shopping():
     global amountTotal_shopping
     amountTotal_shopping = round(sum(LIST), 2)
 
-    print("\nThe amount that you paid for shopping is: ", amountTotal_shopping)
-
-    choice_save = input("\nDo you want to save ? (y/n): ")
-    if choice_save == 'y' or choice_save == 'Y':
-        insert_data_shopping()
-        print("Data has been saved...")
-    else:
-        pass
     return amountTotal_shopping
 
 ##### Liesure and others #################
-
-def spent_liesure_others():
-    value_all=['PURCHASE']
-    LISTe = []
-################ Start investment amount
-
-    invest=data[data['Operation'].str.contains('ING ARIA',flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)] # selects row with item
-
+#@amount_retriever
+def spent_investment():
+    # amount_fl_invest = investment
+    invest=data[data['Operation'].str.contains('PURCHASE ING ARIA',flags=re.IGNORECASE)]
     amount_invest=[0] if invest.empty else invest["Amount"]
     amount_invest=[i for i in amount_invest]
-
     ind=len(amount_invest)
 
     global fl_amount_invest
     for _ in range(ind): fl_amount_invest = float(sum(amount_invest))
+    return fl_amount_invest
 
-########### END investment amount
+def spent_liesure_others():
+    # amount_spent_li_ot=others
+    value_all=['PURCHASE']
+    LISTe = float(0) # all amount was spent
+    for i in value_all:
+        all_spent_amounts = data[data['Operation'].str.contains(i,flags=re.IGNORECASE)]
+        LISTe = sum(all_spent_amounts['Amount'])
 
-    global operation_Namer
-    global operation_Namer_creditCard
-    global amounts
-    purchase_count=data[data['Operation'].str.contains('purchase',flags=re.IGNORECASE)].count()
-    if purchase_count['Operation'] > 0:
-        for imm in value_all: operation_Namer = data[data['Operation'].str.contains(imm,flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)]
-        amounts=operation_Namer["Amount"]
-    else:
-        operation_Namer_creditCard=data[data['Operation'].str.contains("PAYMENT OF VISA|TRANSFER")==False]
-        amounts=operation_Namer_creditCard['Amount']
+    expenses_total = addition(spent(),spent_shopping()) # excluding bills
+    amount_spent_li_ot = round(LISTe - expenses_total,2)
 
-    for row in amounts: LISTe.append(row)
-
-    global amountTotal_all
-    amountTotal_all=round(sum(LISTe),2)
-
-    amount_spent_lieure_other=(-(amountTotal_all-amountTotal_shopping-amountTotal_food-fl_amount_invest))
-
-    print("\nThe amount spent in investment: ", round(fl_amount_invest, 2))
-    print("\nThe amount that you paid for liesure and others is: ", -round(amount_spent_lieure_other,2))
-    return -round(amount_spent_lieure_other,2)
+    return amount_spent_li_ot
 
 ########## Income /exp balance
+@amount_retriever
+def sale(sale_data='SALE'):
+    '''
+    Returns benefits of sold shares
+    '''
+
+    return sale_data
 
 @amount_retriever
 def salary(salary):
@@ -260,23 +234,40 @@ def telecom_spent(telecom):
     return telecom
 
 @amount_retriever
+def electricity_spent(electricity):
+    return electricity
+
+@amount_retriever
 def rent(amount):
     return amount
+
+@amount_retriever
+def credit(credit):
+    return credit
+
+def addition(*args):
+    '''
+    Sum of any numbers.
+    Especially used to sum expenses.
+    '''
+    res = 0
+    for i in args:
+        res += i
+
+    return res
 
 def monthly_spent():
     '''
     return only expenses. Without investment amount.
+    others = all PURCHASEd items - (shopping + food)
     '''
-    expenses_food = spent()
-    expenses_shopping = spent_shopping()
-    expenses_liesure_other = spent_liesure_others()
-    expenses_rent = sum(rent(script.loyer))
-    expenses_telecom = sum(telecom_spent(script.telecom))
-    income = sum(salary(script.employer))
-
-    expenses_total = expenses_shopping + expenses_food + expenses_liesure_other + expenses_rent + expenses_telecom
-    print(expenses_total)
+    others = spent_liesure_others()
+    expenses_total = round(addition(spent(),spent_shopping(),others,sum(rent(script.loyer)),sum(telecom_spent(script.telecom)),sum(electricity_spent(script.electricity)),
+                                    sum(credit(script.credit))),2)
+    income = sum(salary(script.employer)) + sum(sale('SALE'))
     balance = round(income - (-expenses_total),2)
-    print(balance)
+    return income,balance,expenses_total
+
+
 
 

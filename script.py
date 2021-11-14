@@ -18,16 +18,25 @@ rowsa = config['excel_options']['rowsa']
 ########## END Configuration ########################
 ########## LOCAL VARIABLES ##########################
 telecom = "ORANGE"
+electricity = "SUDSTROUM"
 employer = "CTG LUXEMBOURG"
 payment = "PAYMENT OF VISA|TRANSFER"
 loyer = "Loyer"
+instrument = "ING ARIA"
+credit = "NISSAN"
 ########## END Local variables ######################
-
+def menu_choice():
+    choice_save = input("\nDo you want to save ? (y/n): ")
+    if choice_save == 'y' or choice_save == 'Y':
+        dbn.insert_data()
+        print("Data has been saved...")
+    else:
+        pass
 
 class mainscript:
     """ Mainscript to run select window
         And process Actions """
-    
+
     def root_win(self):
         root = tk.Tk()
         root.withdraw()
@@ -61,7 +70,8 @@ class mainscript:
             elif menuChoice == 'n' or menuChoice == 'N':
                 print("Calculation will start...")
                 time.sleep(5)
-                dbn.spent()
+                print("\nThe amount that you paid for food is: ", dbn.spent())
+                menu_choice()
                 time.sleep(5)
                 choice_see_saved = input("Do you want to see previous spendings ? (y/n):")
                 if choice_see_saved == 'y' or choice_see_saved == 'Y':
@@ -91,7 +101,8 @@ class mainscript:
             elif menuChoice == 'n' or menuChoice == 'N':
                 print("Calculation will start...")
                 time.sleep(5)
-                dbn.spent_shopping()
+                print("\nThe amount that you paid for shopping is: ", dbn.spent_shopping())
+                menu_choice()
                 time.sleep(5)
                 choice_see_saved = input("Do you want to see previous spendigns ? (y/n):")
                 if choice_see_saved == 'y' or choice_see_saved == 'Y':
@@ -107,9 +118,13 @@ class mainscript:
         ## TO ADD
         ###############################
         elif choice_table == 'all' or choice_table == 'ALL':
-            dbn.spent()
-            dbn.spent_shopping()
-            dbn.spent_liesure_others()
+            print("\nThe amount that you paid for food is: ", dbn.spent())
+            menu_choice()
+            print("\nThe amount that you paid for shopping is: ", dbn.spent_shopping())
+            menu_choice()
+            others = dbn.spent_liesure_others()
+            #print("\nThe amount spent in investment: ", invest)
+            print("\nThe amount that you paid for liesure and others is: ", others)
 
         else:
             print("There is no such option...")
@@ -134,10 +149,13 @@ if __name__ == '__main__':
             print(f'{fore.DARK_GREEN}{style.BOLD}### Old data for food ###{style.RESET}')
             dbn.see_saved()
         elif ans == "3":
-            # print(*dbn.salary(employer))
-            # print(*dbn.telecom_spent(telecom))
-            # print(*dbn.rent(loyer))
-            dbn.monthly_spent()
+            monthly=dbn.monthly_spent()
+            print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',*dbn.salary(employer),f'{style.RESET}')
+            print(f"Rent: {fore.RED} ", *dbn.rent(loyer),f'{style.RESET}')
+            print(f"Credit: {fore.RED} ", *dbn.credit(credit),f'{style.RESET}')
+            print(f"Bills (Telecom + electricity): {fore.RED}", dbn.addition(*dbn.telecom_spent(telecom),*dbn.electricity_spent(electricity)),f"{style.RESET}")
+            print(f"Total Expenses: {fore.RED}",monthly[2],f"{style.RESET}")
+            print(f'Balance: {fore.GREEN}',monthly[1] if monthly[1] >= 0 else f'Balance: {fore.RED}',f'{style.RESET}')
         elif ans == "4":
             print("\n Goodbye")
             conn.close()
