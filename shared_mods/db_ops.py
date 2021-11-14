@@ -22,7 +22,7 @@ def sql_queries(object_):
     '''
 
     sql_sub = "select t_customer from table_customer_{}".format(object_)
-    print(sql_sub)
+    #print(sql_sub)
 
     sub_check = cur.execute(sql_sub)
 
@@ -35,23 +35,6 @@ def sql_queries(object_):
         for b in a:
             sub.append(b.lower()) # converts provider name from database to lower case.
     return sub
-
-## SQL QUERIES FOR SHOPPING ##
-
-# sql_sub_sh = "select t_customer from table_customer_shopping"
-#
-# sub_check_sh = cur.execute(sql_sub_sh)
-#
-# sub_fetch_sh = sub_check_sh.fetchall()
-#
-# sub_list_sh = [list(i) for i in sub_fetch_sh]
-# sub_sh = []
-# for a in sub_list_sh:
-#
-#     for b in a:
-#         sub_sh.append(b.lower()) #converts provider name from database to lower case.
-
-
 
 def amount_retriever(func):
     '''
@@ -105,13 +88,14 @@ def add_delete(object_):
 
 
     elif in1 == 'delete' or in1 == 'DELETE':
-        print('\n', sql_queries(object_), '\n')
+        #print('\n', sql_queries(object_), '\n')
         global choice_del
         choice_del = input("Company to delete: ")
         delete_customer(object_)
 
     elif in1 == 'n' or in1 == 'N':
-        spent()
+        print("The amount that you have paid for '{}' is:".format(object_) ,spent(object_))
+
 
     else:
         logger.warning("Operation not found. Program quits...")

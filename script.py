@@ -66,7 +66,6 @@ class mainscript:
                 elif choice == 'n' or choice == 'N':
                     dbn.add_delete("food")
 
-
             elif menuChoice == 'n' or menuChoice == 'N':
                 print("Calculation will start...")
                 time.sleep(5)
@@ -90,10 +89,7 @@ class mainscript:
                 choice = input("Do you want to see company list? (y/n) : ")
                 if choice == 'y' or choice == 'Y':
                     print(dbn.sql_queries("shopping"))
-
-
                     dbn.add_delete("shopping")
-
                 elif choice == 'n' or choice == 'N':
                     dbn.add_delete("shopping")
 
