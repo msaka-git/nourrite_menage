@@ -25,10 +25,10 @@ loyer = "Loyer"
 instrument = "ING ARIA"
 credit = "NISSAN"
 ########## END Local variables ######################
-def menu_choice():
+def menu_choice(table):
     choice_save = input("\nDo you want to save ? (y/n): ")
     if choice_save == 'y' or choice_save == 'Y':
-        dbn.insert_data()
+        dbn.insert_data(table)
         print("Data has been saved...")
     else:
         pass
@@ -60,22 +60,22 @@ class mainscript:
             if menuChoice == 'y' or menuChoice == 'Y':
                 choice = input("Do you want to see company list? (y/n) : ")
                 if choice == 'y' or choice == 'Y':
-                    print(dbn.sub)
-                    dbn.add_delete()
+                    print(dbn.sql_queries("food"))
+                    dbn.add_delete("food")
 
                 elif choice == 'n' or choice == 'N':
-                    dbn.add_delete()
+                    dbn.add_delete("food")
 
 
             elif menuChoice == 'n' or menuChoice == 'N':
                 print("Calculation will start...")
                 time.sleep(5)
-                print("\nThe amount that you paid for food is: ", dbn.spent())
-                menu_choice()
+                print("\nThe amount that you paid for food is: ", dbn.spent('food'))
+                menu_choice('nourriture')
                 time.sleep(5)
                 choice_see_saved = input("Do you want to see previous spendings ? (y/n):")
                 if choice_see_saved == 'y' or choice_see_saved == 'Y':
-                    dbn.see_saved()
+                    dbn.see_saved('nourriture')
                 else:
 
                     print(f'{fore.GREEN}{style.BOLD}What do you want to do ?{style.RESET}')
@@ -89,24 +89,24 @@ class mainscript:
             if menuChoice == 'y' or menuChoice == 'Y':
                 choice = input("Do you want to see company list? (y/n) : ")
                 if choice == 'y' or choice == 'Y':
-                    print(dbn.sub_sh)
+                    print(dbn.sql_queries("shopping"))
 
 
-                    dbn.add_delete_shopping()
+                    dbn.add_delete("shopping")
 
                 elif choice == 'n' or choice == 'N':
-                    dbn.add_delete_shopping()
+                    dbn.add_delete("shopping")
 
 
             elif menuChoice == 'n' or menuChoice == 'N':
                 print("Calculation will start...")
                 time.sleep(5)
-                print("\nThe amount that you paid for shopping is: ", dbn.spent_shopping())
-                menu_choice()
+                print("\nThe amount that you paid for shopping is: ", dbn.spent('shopping'))
+                menu_choice('shopping')
                 time.sleep(5)
                 choice_see_saved = input("Do you want to see previous spendigns ? (y/n):")
                 if choice_see_saved == 'y' or choice_see_saved == 'Y':
-                    dbn.see_saved_shopping()
+                    dbn.see_saved('shopping')
                 else:
                     print(f'{fore.GREEN}{style.BOLD}What do you want to do ?{style.RESET}')
 
@@ -118,10 +118,10 @@ class mainscript:
         ## TO ADD
         ###############################
         elif choice_table == 'all' or choice_table == 'ALL':
-            print("\nThe amount that you paid for food is: ", dbn.spent())
-            menu_choice()
-            print("\nThe amount that you paid for shopping is: ", dbn.spent_shopping())
-            menu_choice()
+            print("\nThe amount that you paid for food is: ", dbn.spent('food'))
+            menu_choice('food')
+            print("\nThe amount that you paid for shopping is: ", dbn.spent('shopping'))
+            menu_choice('shopping')
             others = dbn.spent_liesure_others()
             #print("\nThe amount spent in investment: ", invest)
             print("\nThe amount that you paid for liesure and others is: ", others)
@@ -144,10 +144,10 @@ if __name__ == '__main__':
             sc.menu()
         elif ans == "2":
             print(f'{fore.DARK_GREEN}{style.BOLD}### Old data for shopping ###{style.RESET}')
-            dbn.see_saved_shopping()
+            dbn.see_saved('shopping')
             print(" ")
             print(f'{fore.DARK_GREEN}{style.BOLD}### Old data for food ###{style.RESET}')
-            dbn.see_saved()
+            dbn.see_saved('nourriture')
         elif ans == "3":
             monthly=dbn.monthly_spent()
             print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',*dbn.salary(employer),f'{style.RESET}')
