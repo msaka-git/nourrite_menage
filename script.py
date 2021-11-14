@@ -22,7 +22,6 @@ electricity = "SUDSTROUM"
 employer = "CTG LUXEMBOURG"
 payment = "PAYMENT OF VISA|TRANSFER"
 loyer = "Loyer"
-instrument = "ING ARIA"
 credit = "NISSAN"
 ########## END Local variables ######################
 def menu_choice(table):
@@ -119,7 +118,8 @@ class mainscript:
             print("\nThe amount that you paid for shopping is: ", dbn.spent('shopping'))
             menu_choice('shopping')
             others = dbn.spent_liesure_others()
-            #print("\nThe amount spent in investment: ", invest)
+            print("\nThe amount spent in investment: ", dbn.spent_investment())
+            menu_choice('investment')
             print("\nThe amount that you paid for liesure and others is: ", others)
 
         else:

@@ -15,10 +15,11 @@ bankFile=ins.file_select(f)
 dt = bankFile["Value Date"].tail(1)
 data = bankFile.sort_values("Operation")
 
-## SQL QUERIES FOR FOOD ##
+## SQL QUERIES FOR CUSTOMERS OR PROVIDERS ##
 def sql_queries(object_):
     '''
-    object = FOOD or SHOPPING
+    To see customers inside t_customer column of table_customer
+    object = FOOD or SHOPPING or INVESTMENT
     '''
 
     sql_sub = "select t_customer from table_customer_{}".format(object_)
@@ -124,15 +125,8 @@ def spent(object_):
 ##### Liesure and others #################
 #@amount_retriever
 def spent_investment():
-    # amount_fl_invest = investment
-    invest=data[data['Operation'].str.contains('PURCHASE ING ARIA',flags=re.IGNORECASE)]
-    amount_invest=[0] if invest.empty else invest["Amount"]
-    amount_invest=[i for i in amount_invest]
-    ind=len(amount_invest)
-
-    global fl_amount_invest
-    for _ in range(ind): fl_amount_invest = float(sum(amount_invest))
-    return fl_amount_invest
+    sql_spent=spent('investment')
+    return sql_spent
 
 def spent_liesure_others():
     # amount_spent_li_ot=others
