@@ -151,24 +151,8 @@ def sale(sale_data='SALE'):
     return sale_data
 
 @amount_retriever
-def salary(salary):
-    return salary
-
-@amount_retriever
-def telecom_spent(telecom):
-    return telecom
-
-@amount_retriever
-def electricity_spent(electricity):
-    return electricity
-
-@amount_retriever
-def rent(amount):
-    return amount
-
-@amount_retriever
-def credit(credit):
-    return credit
+def amount_catch(item_):
+    return item_
 
 def addition(*args):
     '''
@@ -187,9 +171,9 @@ def monthly_spent():
     others = all PURCHASEd items - (shopping + food)
     '''
     others = spent_liesure_others()
-    expenses_total = round(addition(spent("food"),spent("shopping"),others,sum(rent(script.loyer)),sum(telecom_spent(script.telecom)),sum(electricity_spent(script.electricity)),
-                                    sum(credit(script.credit)),sum(credit(script.payment))),2)
-    income = sum(salary(script.employer)) + sum(sale('SALE'))
+    expenses_total = round(addition(spent("food"),spent("shopping"),others,sum(amount_catch(script.loyer)),sum(amount_catch(script.telecom)),sum(amount_catch(script.electricity)),
+                                    sum(amount_catch(script.credit)),sum(amount_catch(script.payment))),2)
+    income = sum(amount_catch(script.employer)) + sum(sale('SALE'))
     balance = round(income - (-expenses_total),2)
     return income,balance,expenses_total
 

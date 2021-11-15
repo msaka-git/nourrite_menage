@@ -24,13 +24,46 @@ payment = "PAYMENT OF VISA ACCOUNT"
 loyer = "Loyer"
 credit = "NISSAN"
 ########## END Local variables ######################
-def menu_choice(table):
+def menu_save(table):
     choice_save = input("\nDo you want to save ? (y/n): ")
     if choice_save == 'y' or choice_save == 'Y':
         dbn.insert_data(table)
         print("Data has been saved...")
     else:
         pass
+
+def menu_choice(choice_,ch_table):
+    '''
+    choice: choice of parameters; food, liesure, shopping, all
+    '''
+    menuChoice = input("Go to customer/provider options? (y/n): ")
+    if menuChoice == 'y' or menuChoice == 'Y':
+        choice = input("Do you want to see company list? (y/n) : ")
+        if choice == 'y' or choice == 'Y':
+            print(dbn.sql_queries("{}".format(choice_)))
+            dbn.add_delete("{}".format(choice_))
+
+        elif choice == 'n' or choice == 'N':
+            dbn.add_delete("{}".format(choice_))
+
+    elif menuChoice == 'n' or menuChoice == 'N':
+        print("Calculation will start...")
+        time.sleep(5)
+        print("\nThe amount that you paid for {} is: ".format(choice_), dbn.spent('{}'.format(choice_)))
+        #menu_save('nourriture')
+        menu_save('{}'.format(ch_table))
+        time.sleep(5)
+        choice_see_saved = input("Do you want to see previous spendings ? (y/n):")
+        if choice_see_saved == 'y' or choice_see_saved == 'Y':
+            #dbn.see_saved('nourriture')
+            dbn.see_saved('{}'.format(ch_table))
+        else:
+
+            print(f'{fore.GREEN}{style.BOLD}What do you want to do ?{style.RESET}')
+
+    else:
+        print(" ")
+        logger.warning("{} : no such option.".format(menuChoice))
 
 class mainscript:
     """ Mainscript to run select window
@@ -55,71 +88,23 @@ class mainscript:
         choice_table = input("Make your choice food, shopping, liesure? (food/shopping/liesure/all): ")
 
         if choice_table == 'food' or choice_table == 'FOOD':
-            menuChoice = input("Go to customer/provider options? (y/n): ")
-            if menuChoice == 'y' or menuChoice == 'Y':
-                choice = input("Do you want to see company list? (y/n) : ")
-                if choice == 'y' or choice == 'Y':
-                    print(dbn.sql_queries("food"))
-                    dbn.add_delete("food")
-
-                elif choice == 'n' or choice == 'N':
-                    dbn.add_delete("food")
-
-            elif menuChoice == 'n' or menuChoice == 'N':
-                print("Calculation will start...")
-                time.sleep(5)
-                print("\nThe amount that you paid for food is: ", dbn.spent('food'))
-                menu_choice('nourriture')
-                time.sleep(5)
-                choice_see_saved = input("Do you want to see previous spendings ? (y/n):")
-                if choice_see_saved == 'y' or choice_see_saved == 'Y':
-                    dbn.see_saved('nourriture')
-                else:
-
-                    print(f'{fore.GREEN}{style.BOLD}What do you want to do ?{style.RESET}')
-
-            else:
-                print(" ")
+            menu_choice('food','nourriture')
 
         ##### MENU FOR SHOPPING #####################
         elif choice_table == 'shopping' or choice_table == 'SHOPPING':
-            menuChoice = input("Go to customer/provider options? (y/n): ")
-            if menuChoice == 'y' or menuChoice == 'Y':
-                choice = input("Do you want to see company list? (y/n) : ")
-                if choice == 'y' or choice == 'Y':
-                    print(dbn.sql_queries("shopping"))
-                    dbn.add_delete("shopping")
-                elif choice == 'n' or choice == 'N':
-                    dbn.add_delete("shopping")
-
-
-            elif menuChoice == 'n' or menuChoice == 'N':
-                print("Calculation will start...")
-                time.sleep(5)
-                print("\nThe amount that you paid for shopping is: ", dbn.spent('shopping'))
-                menu_choice('shopping')
-                time.sleep(5)
-                choice_see_saved = input("Do you want to see previous spendigns ? (y/n):")
-                if choice_see_saved == 'y' or choice_see_saved == 'Y':
-                    dbn.see_saved('shopping')
-                else:
-                    print(f'{fore.GREEN}{style.BOLD}What do you want to do ?{style.RESET}')
-
-            else:
-                print(" ")
-                logger.warning("{} : no such option.".format(menuChoice))
+            menu_choice('shopping','shopping')
 
         ###### MENU FOR LIESURE #######
         ## TO ADD
         ###############################
         elif choice_table == 'all' or choice_table == 'ALL':
             print("\nThe amount that you paid for food is: ", dbn.spent('food'))
-            menu_choice('food')
+            menu_save('food')
             print("\nThe amount that you paid for shopping is: ", dbn.spent('shopping'))
-            menu_choice('shopping')
+            menu_save('shopping')
             others = dbn.spent_liesure_others()
             print("\nThe amount spent in investment: ", dbn.spent_investment())
-            menu_choice('investment')
+            menu_save('investment')
             print("\nThe amount that you paid for liesure and others is: ", others)
 
         else:
@@ -146,11 +131,11 @@ if __name__ == '__main__':
             dbn.see_saved('nourriture')
         elif ans == "3":
             monthly=dbn.monthly_spent()
-            print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',*dbn.salary(employer),f'{style.RESET}')
-            print(f"Rent: {fore.RED} ", *dbn.rent(loyer),f'{style.RESET}')
-            print(f"Credit: {fore.RED} ", *dbn.credit(credit),f'{style.RESET}')
-            print(f"Credit Card Repayment: {fore.RED} ", *dbn.credit(payment),f'{style.RESET}')
-            print(f"Bills (Telecom + electricity): {fore.RED}", dbn.addition(*dbn.telecom_spent(telecom),*dbn.electricity_spent(electricity)),f"{style.RESET}")
+            print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',*dbn.amount_catch(employer),f'{style.RESET}')
+            print(f"Rent: {fore.RED} ", *dbn.amount_catch(loyer),f'{style.RESET}')
+            print(f"Credit: {fore.RED} ", *dbn.amount_catch(credit),f'{style.RESET}')
+            print(f"Credit Card Repayment: {fore.RED} ", *dbn.amount_catch(payment),f'{style.RESET}')
+            print(f"Bills (Telecom + electricity): {fore.RED}", dbn.addition(*dbn.amount_catch(telecom),*dbn.amount_catch(electricity)),f"{style.RESET}")
             print(f"Total Expenses: {fore.RED}",monthly[2],f"{style.RESET}")
             print(f'Balance: {fore.GREEN}',monthly[1] if monthly[1] >= 0 else f'Balance: {fore.RED}',f'{style.RESET}')
         elif ans == "4":
