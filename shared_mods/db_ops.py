@@ -1,103 +1,108 @@
+import script
 from shared_mods.connection_module import conn,cur
-from script import mainscript
 from shared_mods.logger_module import logger
 import re
+from script import mainscript
 
-amountTotal_food=float(0)
-amountTotal_shopping=float(0)
+#amountTotal_food=float(0)
+#amountTotal_shopping=float(0)
 
 ins=mainscript()
 
 f=ins.root_win()
 bankFile=ins.file_select(f)
-## SQL QUERIES FOR FOOD ##
 
-sql_sub = "select t_customer from table_customer_food"
+dt = bankFile["Value Date"].tail(1)
+data = bankFile.sort_values("Operation")
 
-sub_check = cur.execute(sql_sub)
+## SQL QUERIES FOR CUSTOMERS OR PROVIDERS ##
+def sql_queries(object_):
+    '''
+    To see customers inside t_customer column of table_customer
+    object = FOOD or SHOPPING or INVESTMENT
+    '''
 
-sub_fetch = sub_check.fetchall()
+    sql_sub = "select t_customer from table_customer_{}".format(object_)
+    sub_check = cur.execute(sql_sub)
+    sub_fetch = sub_check.fetchall()
+    sub_list = [list(i) for i in sub_fetch]
+    sub = []
+    for a in sub_list:
+        for b in a:
+            sub.append(b.lower()) # converts provider name from database to lower case.
+    return sub
 
-sub_list = [list(i) for i in sub_fetch]
+def amount_retriever(func):
+    '''
+    Retrieve the amount of a given row.
+    Ex: you want to retrieve the amount of 'orange' telecom expense.
+    '''
 
-sub = []
-for a in sub_list:
-    for b in a:
-        sub.append(b.lower()) # converts provider name from database to lower case.
+    def wrapper(*args):
+        islem = func(*args)
+        expense_data = data[data['{}'.format(islem[0])].str.contains(islem[1],flags=re.IGNORECASE, na=False)]
+        expense_amount = [float(i) for i in expense_data['Amount']]
+        return expense_amount
+    return wrapper
 
-## SQL QUERIES FOR SHOPPING ##
+def insert_data(table):
+    query = "select * from table_{} where t_date='{}' and t_spent='{}'".format(table,dt,amountTotal)
+    res = cur.execute(query)
+    if res:
+        print("Data already exist in DB")
+    else:
+        for a in dt:
+            sql1 = "insert into table_{} values(NULL,'{}','{}')".format(table,a, amountTotal)
+            cur.execute(sql1)
+            print("Data has been saved...")
+            conn.commit()
 
-sql_sub_sh = "select t_customer from table_customer_shopping"
-
-sub_check_sh = cur.execute(sql_sub_sh)
-
-sub_fetch_sh = sub_check_sh.fetchall()
-
-sub_list_sh = [list(i) for i in sub_fetch_sh]
-sub_sh = []
-for a in sub_list_sh:
-
-    for b in a:
-        sub_sh.append(b.lower()) #converts provider name from database to lower case.
-
-def insert_data():
-
-    dt = bankFile["Value Date"].tail(1)
-
-    for a in dt:
-        sql1 = "insert into table_nourriture values(NULL,'{}','{}')".format(a, amountTotal_food)
-
-        cur.execute(sql1)
-        conn.commit()
-
-
-def insert_customer():
-    sql2 = "insert into table_customer_food values(NULL,'{}')".format(sub_input)
+def insert_customer(table):
+    sql2 = "insert into table_customer_{} values(NULL,'{}')".format(table,sub_input)
     cur.execute(sql2)
     conn.commit()
 
-
-def delete_customer():
-    sql3 = "delete from table_customer_food where t_customer = '{}'".format(choice_del)
+def delete_customer(table):
+    sql3 = "delete from table_customer_{} where t_customer = '{}'".format(table,choice_del)
     cur.execute(sql3)
     conn.commit()
 
-
-def see_saved():
-    sql4 = "select t_date,t_spent from table_nourriture"
+def see_saved(table):
+    sql4 = "select t_date,t_spent from table_{} order by t_date".format(table)
     data = cur.execute(sql4)
     for i in data.fetchall():
         print(', '.join(map(str, i)))
 
-
-def add_delete():
+def add_delete(object_):
     in1 = input("Do you want to add or delete company? (add/delete/n): ")
 
     if in1 == 'add' or in1 == 'ADD':
         global sub_input
         sub_input = input("Company to add: ")
-        insert_customer()
+        insert_customer(object_)
 
 
     elif in1 == 'delete' or in1 == 'DELETE':
-        print('\n', sub, '\n')
+        #print('\n', sql_queries(object_), '\n')
         global choice_del
         choice_del = input("Company to delete: ")
-        delete_customer()
+        delete_customer(object_)
 
     elif in1 == 'n' or in1 == 'N':
-        spent()
+        print("The amount that you have paid for '{}' is:".format(object_) ,spent(object_))
 
     else:
         logger.warning("Operation not found. Program quits...")
 
 
-def spent():
+def spent(object_):
+    '''
+    object must be food, shopping, liesure or all
+    '''
 
-    data = bankFile.sort_values("Operation")
     LIST = []
 
-    for i in sub:
+    for i in sql_queries(object_):
         operation_Name = data[data['Operation'].str.contains(i,flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.
         amounts = operation_Name["Amount"]
 
@@ -105,137 +110,76 @@ def spent():
             LIST.append(row)
 
 
-    global amountTotal_food
-    amountTotal_food = round(sum(LIST), 2)
-    print("\nThe amount that you paid for food is: ", amountTotal_food)
+    global amountTotal
+    amountTotal = round(sum(LIST), 2)
 
-    choice_save = input("\nDo you want to save ? (y/n): ")
-    if choice_save == 'y' or choice_save == 'Y':
-        insert_data()
-        print("Data has been saved...")
-    else:
-        pass
-
-
-#### SHOPPING FUNCTIONS ###################
-
-
-
-def insert_data_shopping():
-
-    dt = bankFile["Value Date"].tail(1)
-
-    for a in dt:
-        sql1 = "insert into table_shopping values(NULL,'{}','{}')".format(a, amountTotal_shopping)
-
-        cur.execute(sql1)
-        conn.commit()
-
-
-def insert_customer_shopping():
-    sql2 = "insert into table_customer_shopping values(NULL,'{}')".format(sub_input)
-    cur.execute(sql2)
-    conn.commit()
-
-
-def delete_customer_shopping():
-    sql3 = "delete from table_customer_shopping where t_customer = '{}'".format(choice_del)
-    cur.execute(sql3)
-    conn.commit()
-
-
-def see_saved_shopping():
-    sql4 = "select t_date,t_spent from table_shopping"
-    data = cur.execute(sql4)
-    for i in data.fetchall():
-        print(', '.join(map(str, i)))
-
-
-def add_delete_shopping():
-    in1 = input("Do you want to add or delete company? (add/delete/n): ")
-
-    if in1 == 'add' or in1 == 'ADD':
-        global sub_input
-        sub_input = input("Company to add: ")
-        insert_customer_shopping()
-
-
-    elif in1 == 'delete' or in1 == 'DELETE':
-        print('\n', sub_sh, '\n')
-        global choice_del
-        choice_del = input("Company to delete: ")
-        delete_customer_shopping()
-
-    elif in1 == 'n' or in1 == 'N':
-        spent_shopping()
-
-    else:
-        logger.warning("Operation not found. Program quits...")
-
-
-def spent_shopping():
-
-    data = bankFile.sort_values("Operation")
-    LIST = []
-
-    for i in sub_sh:
-        operation_Name = data[data['Operation'].str.contains(i,flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)]
-        amounts = operation_Name["Amount"]
-
-        for row in amounts:
-            LIST.append(row)
-
-    global amountTotal_shopping
-    amountTotal_shopping = round(sum(LIST), 2)
-
-    print("\nThe amount that you paid for shopping is: ", amountTotal_shopping)
-
-    choice_save = input("\nDo you want to save ? (y/n): ")
-    if choice_save == 'y' or choice_save == 'Y':
-        insert_data_shopping()
-        print("Data has been saved...")
-    else:
-        pass
+    return amountTotal
 
 ##### Liesure and others #################
+#@amount_retriever
+def spent_investment():
+    sql_spent=spent('investment')
+    return sql_spent
 
 def spent_liesure_others():
+    # amount_spent_li_ot=others
     value_all=['PURCHASE']
-    #value_sell=['SALE']
-    data = bankFile.sort_values("Operation")
-    LISTe = []
-################ Start investment amount
+    LISTe = float(0) # all amount was spent
+    for i in value_all:
+        all_spent_amounts = data[data['Operation'].str.contains(i,flags=re.IGNORECASE)]
+        LISTe = sum(all_spent_amounts['Amount'])
 
-    invest=data[data['Operation'].str.contains('ING ARIA',flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)] # selects row with item
-    #print(invest)
+    expenses_total = addition(spent("food"),spent("shopping")) # excluding bills
+    amount_spent_li_ot = round(LISTe - expenses_total,2)
 
-    amount_invest=[0] if invest.empty else invest["Amount"]
-    amount_invest=[i for i in amount_invest]
+    return amount_spent_li_ot
 
-    # for amount in amount_invest:
-    #     if amount > 0:
-    #         amount_invest.remove(amount)
+########## Income /exp balance
+@amount_retriever
+def sale(sale_data='SALE'):
+    '''
+    Returns benefits of sold shares
+    '''
+    res = 'Operation'
+    return res,sale_data
 
-    #global amount_invest
-            #return amount_invest
+@amount_retriever
+def amount_catch(item_):
+    if item_ == script.credit_card_no:
+        res = 'Beneficiary Account'
+    else:
+        res = 'Operation'
+    return res,item_
 
-    ind=len(amount_invest)
-    global fl_amount_invest
-    for INDEX in range(ind): fl_amount_invest = float(sum(amount_invest))
+def rent_income(item_):
+     if item_ == script.loyer:
+         rent=data[data['Operation'].str.contains('Loyer .*charges',flags=re.IGNORECASE,regex=True)]
+         state_help=data[data['Operation'].str.contains("European Transfer TRESORERIE DE L'ETAT.*",flags=re.IGNORECASE,regex=True)]
+         res_rent=addition(sum(rent['Amount']))
+         res_help_state=addition(sum(state_help['Amount']))
+         return res_rent,res_help_state
 
+def addition(*args):
+    '''
+    Sum of any numbers.
+    Especially used to sum expenses.
+    '''
+    res = 0
+    for i in args:
+        res += i
 
-########### END investment amount
+    return res
 
-    global operation_Namer
-    for imm in value_all: operation_Namer = data[data['Operation'].str.contains(imm,flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.)]
-    amounts=operation_Namer["Amount"]
-    for row in amounts: LISTe.append(row)
+def monthly_spent():
+    '''
+    return only expenses. Without investment amount.
+    others = all PURCHASEd items - (shopping + food)
+    '''
 
-    global amountTotal_all
-    amountTotal_all=round(sum(LISTe),2)
-    #print("amount total all: ", amountTotal_all)
+    others = spent_liesure_others()
+    expenses_total = round(addition(spent("food"),spent("shopping"),others,rent_income(script.loyer)[0],spent("telecom"),spent("electricity"),
+                                     sum(amount_catch(script.credit)),sum(amount_catch(script.credit_card_no))),2)
+    income = sum(amount_catch(script.employer)) + sum(sale('SALE')) + rent_income(script.loyer)[1]
+    balance = round(income - (-expenses_total),2)
+    return income,balance,expenses_total
 
-    amount_spent_lieure_other=(-(amountTotal_all-amountTotal_shopping-amountTotal_food-fl_amount_invest))
-    #print("amount_spent_lieure_other: ", amount_spent_lieure_other)
-    print("\nThe amount spent in investment: ", round(fl_amount_invest, 2))
-    print("\nThe amount that you paid for liesure and others is: ", -round(amount_spent_lieure_other,2))

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="issues">
+    <option name="index">
+      <map>
+        <entry key="/Python Console">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/python_web/nourriture_manage_webapp/nourriture_webapp/.gitignore">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/python_web/nourriture_manage_webapp/nourriture_webapp/index/admin.py">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/python_web/nourriture_manage_webapp/nourriture_webapp/index/models.py">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/python_web/nourriture_manage_webapp/nourriture_webapp/nourriture_webapp/settings.py">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/.gitignore">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/config.ini">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/script.py">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/shared_mods/connection_module.py">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/shared_mods/db_ops.py">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/test.py">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/test2.py">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../share_price/main.py">
+          <value>
+            <set />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
