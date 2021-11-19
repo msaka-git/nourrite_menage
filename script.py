@@ -14,21 +14,19 @@ config = ConfigParser()
 config.read('config.ini')
 column = config['excel_options']['column']
 rowsa = config['excel_options']['rowsa']
-
 ########## END Configuration ########################
+
 ########## LOCAL VARIABLES ##########################
-telecom = "ORANGE"
-electricity = "SUDSTROUM"
 employer = "CTG LUXEMBOURG"
-payment = "PAYMENT OF VISA ACCOUNT"
 loyer = "Loyer"
 credit = "NISSAN"
+credit_card_no = "L"
 ########## END Local variables ######################
+
 def menu_save(table):
     choice_save = input("\nDo you want to save ? (y/n): ")
     if choice_save == 'y' or choice_save == 'Y':
         dbn.insert_data(table)
-        print("Data has been saved...")
     else:
         pass
 
@@ -60,7 +58,6 @@ def menu_choice(choice_,ch_table):
         else:
 
             print(f'{fore.GREEN}{style.BOLD}What do you want to do ?{style.RESET}')
-
     else:
         print(" ")
         logger.warning("{} : no such option.".format(menuChoice))
@@ -78,9 +75,10 @@ class mainscript:
 
     def file_select(self, file):
         bankFile = pd.read_excel(r'{}'.format(file), usecols='{}'.format(column), skiprows=[0,1,2,3,4,5])
-        bankFile.dropna(inplace=True)
+        bankFile.dropna(inplace=False)
         pd.set_option('display.max_columns', None)
         pd.set_option('max_rows', None)
+
         print(file)
         return bankFile
 
@@ -131,11 +129,12 @@ if __name__ == '__main__':
             dbn.see_saved('nourriture')
         elif ans == "3":
             monthly=dbn.monthly_spent()
-            print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',*dbn.amount_catch(employer),f'{style.RESET}')
-            print(f"Rent: {fore.RED} ", *dbn.amount_catch(loyer),f'{style.RESET}')
+            print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',*dbn.amount_catch(employer),dbn.rent_income(loyer)[1],f'{style.RESET}')
+            print(f"Rent: {fore.RED} ", dbn.rent_income(loyer)[0],f'{style.RESET}')
             print(f"Credit: {fore.RED} ", *dbn.amount_catch(credit),f'{style.RESET}')
-            print(f"Credit Card Repayment: {fore.RED} ", *dbn.amount_catch(payment),f'{style.RESET}')
-            print(f"Bills (Telecom + electricity): {fore.RED}", dbn.addition(*dbn.amount_catch(telecom),*dbn.amount_catch(electricity)),f"{style.RESET}")
+            print(f"Credit Card Repayment: {fore.RED} ", *dbn.amount_catch(credit_card_no),f'{style.RESET}')
+            print(f"Bills (Telecom + electricity): {fore.RED}", dbn.addition(*dbn.amount_catch(*dbn.sql_queries("telecom")),*dbn.amount_catch(*dbn.sql_queries("electricity")))
+                  ,f"{style.RESET}")
             print(f"Total Expenses: {fore.RED}",monthly[2],f"{style.RESET}")
             print(f'Balance: {fore.GREEN}',monthly[1] if monthly[1] >= 0 else f'Balance: {fore.RED}',f'{style.RESET}')
         elif ans == "4":
