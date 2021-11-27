@@ -129,7 +129,7 @@ if __name__ == '__main__':
             dbn.see_saved('nourriture')
         elif ans == "3":
             monthly=dbn.monthly_spent()
-            print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',*dbn.amount_catch(employer),dbn.rent_income(loyer)[1],f'{style.RESET}')
+            print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',sum(dbn.amount_catch(employer)),'Earned amounts: ',*dbn.amount_catch(employer),dbn.rent_income(loyer)[1],f'{style.RESET}')
             print(f"Rent: {fore.RED} ", dbn.rent_income(loyer)[0],f'{style.RESET}')
             print(f"Credit: {fore.RED} ", *dbn.amount_catch(credit),f'{style.RESET}')
             print(f"Credit Card Repayment: {fore.RED} ", *dbn.amount_catch(credit_card_no),f'{style.RESET}')
