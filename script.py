@@ -20,7 +20,7 @@ rowsa = config['excel_options']['rowsa']
 employer = "CTG LUXEMBOURG"
 loyer = "Loyer"
 credit = "NISSAN"
-credit_card_no = "L"
+credit_card_no = "LU030141471040210000"
 ########## END Local variables ######################
 
 def menu_save(table):
