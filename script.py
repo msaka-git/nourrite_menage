@@ -20,7 +20,7 @@ rowsa = config['excel_options']['rowsa']
 employer = "CTG LUXEMBOURG"
 loyer = "Loyer"
 credit = "NISSAN"
-credit_card_no = "L"
+credit_card_no = "LU030141471040210000"
 ########## END Local variables ######################
 
 def menu_save(table):
@@ -136,7 +136,7 @@ if __name__ == '__main__':
             print(f"Bills (Telecom + electricity): {fore.RED}", dbn.addition(*dbn.amount_catch(*dbn.sql_queries("telecom")),*dbn.amount_catch(*dbn.sql_queries("electricity")))
                   ,f"{style.RESET}")
             print(f"Total Expenses: {fore.RED}",monthly[2],f"{style.RESET}")
-            print(f'Balance: {fore.GREEN}',monthly[1] if monthly[1] >= 0 else f'Balance: {fore.RED}',f'{style.RESET}')
+            print(f'Balance: {fore.GREEN}',monthly[1] if monthly[1] >= 0 else f'{fore.RED}',monthly[1],f'{style.RESET}')
         elif ans == "4":
             print("\n Goodbye")
             conn.close()
