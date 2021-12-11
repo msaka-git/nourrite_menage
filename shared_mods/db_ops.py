@@ -118,6 +118,7 @@ def spent(object_):
 ##### Liesure and others #################
 #@amount_retriever
 def spent_investment():
+    # TO DO
     sql_spent=spent('investment')
     return sql_spent
 
