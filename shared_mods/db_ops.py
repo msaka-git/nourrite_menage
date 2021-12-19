@@ -36,11 +36,12 @@ def amount_retriever(func):
     '''
     Retrieve the amount of a given row.
     Ex: you want to retrieve the amount of 'orange' telecom expense.
+    islem[0] = 'Operation', islem[1]='SALE', fetch all amounts under Operation column having SALE pattern in rows.
     '''
 
     def wrapper(*args):
         islem = func(*args)
-        expense_data = data[data['{}'.format(islem[0])].str.contains(islem[1],flags=re.IGNORECASE, na=False)]
+        expense_data = data[data['{}'.format(islem[0])].str.contains(islem[1],flags=re.IGNORECASE, na=False,regex=True)]
         expense_amount = [float(i) for i in expense_data['Amount']]
         return expense_amount
     return wrapper
@@ -98,6 +99,7 @@ def add_delete(object_):
 def spent(object_):
     '''
     object must be food, shopping, liesure or all
+    Value or pattern must be present in DB
     '''
 
     LIST = []
@@ -118,19 +120,24 @@ def spent(object_):
 ##### Liesure and others #################
 #@amount_retriever
 def spent_investment():
-    # TO DO
-    sql_spent=spent('investment')
-    return sql_spent
+    """
+    sql_spent calculates iNG ARIA funds. String Returned from DB.
+    sql_investment_other is any other investments such as bought shares in stock exchange.
+    """
+    sql_spent = spent('investment')
+    spent_investment_other = sum(sale('purchase\s.*[^ARIA]\sW[0-9]{10}$'))
+    res = sql_spent + spent_investment_other
+    return res
 
 def spent_liesure_others():
     # amount_spent_li_ot=others
+    # Return all values having 'Purchase' in operations header.
     value_all=['PURCHASE']
     LISTe = float(0) # all amount was spent
     for i in value_all:
         all_spent_amounts = data[data['Operation'].str.contains(i,flags=re.IGNORECASE)]
         LISTe = sum(all_spent_amounts['Amount'])
-
-    expenses_total = addition(spent("food"),spent("shopping")) # excluding bills
+    expenses_total = addition(spent("food"),spent("shopping"),spent_investment()) # excluding bills
     amount_spent_li_ot = round(LISTe - expenses_total,2)
 
     return amount_spent_li_ot
@@ -179,8 +186,10 @@ def monthly_spent():
 
     others = spent_liesure_others()
     expenses_total = round(addition(spent("food"),spent("shopping"),others,rent_income(script.loyer)[0],spent("telecom"),spent("electricity"),
-                                     sum(amount_catch(script.credit)),sum(amount_catch(script.credit_card_no))),2)
+                                     sum(amount_catch(script.credit)),sum(amount_catch(script.credit_card_no)),
+                                    spent('insurance'),spent_investment(),2))
     income = sum(amount_catch(script.employer)) + sum(sale('SALE')) + rent_income(script.loyer)[1]
     balance = round(income - (-expenses_total),2)
+
     return income,balance,expenses_total
 

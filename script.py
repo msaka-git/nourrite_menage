@@ -21,6 +21,7 @@ employer = "CTG LUXEMBOURG"
 loyer = "Loyer"
 credit = "NISSAN"
 credit_card_no = "LU030141471040210000"
+
 ########## END Local variables ######################
 
 def menu_save(table):
@@ -103,6 +104,7 @@ class mainscript:
             others = dbn.spent_liesure_others()
             print("\nThe amount spent in investment: ", dbn.spent_investment())
             menu_save('investment')
+            print("\nThe amount spent in insurances: ", dbn.spent('insurance')) # Put a save menu
             print("\nThe amount that you paid for liesure and others is: ", others)
 
         else:
@@ -131,12 +133,15 @@ if __name__ == '__main__':
             monthly=dbn.monthly_spent()
             print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',sum(dbn.amount_catch(employer)),'Earned amounts: ',*dbn.amount_catch(employer),dbn.rent_income(loyer)[1],f'{style.RESET}')
             print(f"Rent: {fore.RED} ", dbn.rent_income(loyer)[0],f'{style.RESET}')
-            print(f"Credit: {fore.RED} ", *dbn.amount_catch(credit),f'{style.RESET}')
-            print(f"Credit Card Repayment: {fore.RED} ", *dbn.amount_catch(credit_card_no),f'{style.RESET}')
+            print(f"Credit Total: {fore.RED} ",round(dbn.addition(*dbn.amount_catch(credit)),2),f'{style.RESET}',
+                f'{fore.RED}',*dbn.amount_catch(credit),f'{style.RESET}')
+            print(f"Credit Card Repayment: {fore.RED} ", round(dbn.addition(*dbn.amount_catch(credit_card_no)),2),f'{style.RESET}',
+                  f'{fore.RED}',*dbn.amount_catch(credit_card_no),f'{style.RESET}')
             print(f"Bills (Telecom + electricity): {fore.RED}", dbn.addition(*dbn.amount_catch(*dbn.sql_queries("telecom")),*dbn.amount_catch(*dbn.sql_queries("electricity")))
                   ,f"{style.RESET}")
+            print(f"Insurance: {fore.RED}",dbn.spent('insurance'),f"{style.RESET}")
             print(f"Total Expenses: {fore.RED}",monthly[2],f"{style.RESET}")
-            print(f'Balance: {fore.GREEN}',monthly[1] if monthly[1] >= 0 else f'{fore.RED}',monthly[1],f'{style.RESET}')
+            print(f'Balance: {fore.GREEN}',monthly[1] if monthly[1] >= 0 else f'{fore.RED}'"{}".format(monthly[1]),f'{style.RESET}')
         elif ans == "4":
             print("\n Goodbye")
             conn.close()
