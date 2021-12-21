@@ -15,7 +15,7 @@ bankFile=ins.file_select(f)
 dt = bankFile["Value Date"].tail(1)
 data = bankFile.sort_values("Operation")
 
-## SQL QUERIES FOR CUSTOMERS OR PROVIDERS ##
+## SQL QUERIES FOR CUSTOMERS OR PROVIDERS + SQL requests ##
 def sql_queries(object_):
     '''
     To see customers inside t_customer column of table_customer
@@ -32,20 +32,6 @@ def sql_queries(object_):
             sub.append(b.lower()) # converts provider name from database to lower case.
     return sub
 
-def amount_retriever(func):
-    '''
-    Retrieve the amount of a given row.
-    Ex: you want to retrieve the amount of 'orange' telecom expense.
-    islem[0] = 'Operation', islem[1]='SALE', fetch all amounts under Operation column having SALE pattern in rows.
-    '''
-
-    def wrapper(*args):
-        islem = func(*args)
-        expense_data = data[data['{}'.format(islem[0])].str.contains(islem[1],flags=re.IGNORECASE, na=False,regex=True)]
-        expense_amount = [float(i) for i in expense_data['Amount']]
-        return expense_amount
-    return wrapper
-
 def insert_data(table):
     query = "select * from table_{} where t_date='{}' and t_spent='{}'".format(table,dt,amountTotal)
     res = cur.execute(query)
@@ -57,6 +43,25 @@ def insert_data(table):
             cur.execute(sql1)
             print("Data has been saved...")
             conn.commit()
+
+def table_ops(table,action,t_date=None):
+    crt_statment_tdate = "create table '{}' ('id_table' INTEGER NOT NULL UNIQUE," \
+                   "'t_date' NUMERIC NOT NULL," \
+                   "'t_spent' NUMERIC NOT NULL, PRIMARY KEY('id_table' AUTOINCREMENT))".format('table_'+table)
+    crt_cust_statment = "create table '{}' ('id_customer' INTEGER NOT NULL UNIQUE," \
+                        "'t_customer' TEXT UNIQUE, PRIMARY KEY('id_customer' AUTOINCREMENT))".format('table_customer_'+table)
+    table_names_delete = ['table_{}'.format(table),'table_{}_{}'.format('customer',table)]
+
+    if action.lower() == 'create' and t_date.lower() == 'yes':
+        cur.execute(crt_statment_tdate)
+    if action.lower() == 'create_customer':
+        cur.execute(crt_cust_statment)
+    if action.lower() == 'delete':
+        for i in table_names_delete:
+            delete_statment = "drop table if exists {}".format(i)
+            cur.execute(delete_statment)
+
+    conn.commit()
 
 def insert_customer(table):
     sql2 = "insert into table_customer_{} values(NULL,'{}')".format(table,sub_input)
@@ -73,6 +78,20 @@ def see_saved(table):
     data = cur.execute(sql4)
     for i in data.fetchall():
         print(', '.join(map(str, i)))
+
+def amount_retriever(func):
+    '''
+    Retrieve the amount of a given row.
+    Ex: you want to retrieve the amount of 'orange' telecom expense.
+    islem[0] = 'Operation', islem[1]='SALE', fetch all amounts under Operation column having SALE pattern in rows.
+    '''
+
+    def wrapper(*args):
+        islem = func(*args)
+        expense_data = data[data['{}'.format(islem[0])].str.contains(islem[1],flags=re.IGNORECASE, na=False,regex=True)]
+        expense_amount = [float(i) for i in expense_data['Amount']]
+        return expense_amount
+    return wrapper
 
 def add_delete(object_):
     in1 = input("Do you want to add or delete company? (add/delete/n): ")
@@ -189,6 +208,7 @@ def monthly_spent():
                                      sum(amount_catch(script.credit)),sum(amount_catch(script.credit_card_no)),
                                     spent('insurance'),spent_investment(),2))
     income = sum(amount_catch(script.employer)) + sum(sale('SALE')) + rent_income(script.loyer)[1]
+    income = round(income,2)
     balance = round(income - (-expenses_total),2)
 
     return income,balance,expenses_total

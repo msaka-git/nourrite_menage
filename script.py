@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import logging
 from configparser import ConfigParser
 from colored import back, style, fore
 import time
@@ -20,16 +21,53 @@ rowsa = config['excel_options']['rowsa']
 employer = "CTG LUXEMBOURG"
 loyer = "Loyer"
 credit = "NISSAN"
-credit_card_no = "L"
+credit_card_no = "LU030141471040210000"
 
 ########## END Local variables ######################
+
+def print_text(message, fonction=None):
+    print("\nAmount spent for {}: ".format(message), fonction)
+
+def print_colorfull(color,message,style_=None,fonction=None):
+    colors = { 'green':f"{fore.GREEN}",
+               'bold':f"{style.BOLD}",
+               'dark_green':f"{fore.DARK_GREEN}",
+               'red':f"{fore.RED}"
+    }
+    if color and style_ == 'BOLD':
+        print(colors[color]+colors['bold']+'{}'.format(message),f'{style.RESET}')
+    if color and not style_ and not fonction:
+        print(colors[color]+'{}'.format(message),f'{style.RESET}')
+    if color and fonction:
+        print('{}'.format(message)+colors[color],fonction,f"{style.RESET}")
 
 def menu_save(table):
     choice_save = input("\nDo you want to save ? (y/n): ")
     if choice_save == 'y' or choice_save == 'Y':
         dbn.insert_data(table)
+    elif choice_save == 'n' or choice_save == 'N':
+        print_colorfull('red',"Not saved.")
     else:
-        pass
+        logging.warning("{}: No such option.".format(choice_save))
+
+def db_menu():
+    print('Operations are: \n'
+          '1.Create table for expense savings\n'
+          '2.Create customer table\n'
+          '3.Delete table\n')
+    ans = input('Answer: ')
+    if ans == '1':
+        t_name = input("Table to create: ")
+        dbn.table_ops(t_name,'create',t_date='Yes')
+        print_colorfull('green','Table {} created.'.format('table_'+t_name))
+    if ans == '2':
+        t_name = input("Table to create: ")
+        dbn.table_ops(t_name,'create_customer')
+        print_colorfull('green','Table {} created.'.format('table_customer_'+t_name))
+    if ans == '3':
+        t_name = input("Table to delete: ")
+        dbn.table_ops(t_name,'delete')
+        print_colorfull('green', 'All tables related to {} deleted'.format(t_name))
 
 def menu_choice(choice_,ch_table):
     '''
@@ -49,19 +87,16 @@ def menu_choice(choice_,ch_table):
         print("Calculation will start...")
         time.sleep(5)
         print("\nThe amount that you paid for {} is: ".format(choice_), dbn.spent('{}'.format(choice_)))
-        #menu_save('nourriture')
         menu_save('{}'.format(ch_table))
         time.sleep(5)
         choice_see_saved = input("Do you want to see previous spendings ? (y/n):")
         if choice_see_saved == 'y' or choice_see_saved == 'Y':
-            #dbn.see_saved('nourriture')
             dbn.see_saved('{}'.format(ch_table))
         else:
 
             print(f'{fore.GREEN}{style.BOLD}What do you want to do ?{style.RESET}')
     else:
-        print(" ")
-        logger.warning("{} : no such option.".format(menuChoice))
+        logger.warning("\n{} : no such option.".format(menuChoice))
 
 class mainscript:
     """ Mainscript to run select window
@@ -97,19 +132,18 @@ class mainscript:
         ## TO ADD
         ###############################
         elif choice_table == 'all' or choice_table == 'ALL':
-            print("\nThe amount that you paid for food is: ", dbn.spent('food'))
+            print_text('food',dbn.spent('food'))
             menu_save('food')
-            print("\nThe amount that you paid for shopping is: ", dbn.spent('shopping'))
+            print_text('shopping',dbn.spent('shopping'))
             menu_save('shopping')
             others = dbn.spent_liesure_others()
-            print("\nThe amount spent in investment: ", dbn.spent_investment())
+            print_text('investment',dbn.spent_investment())
             menu_save('investment')
-            print("\nThe amount spent in insurances: ", dbn.spent('insurance')) # Put a save menu
-            print("\nThe amount that you paid for liesure and others is: ", others)
+            print_text('insurances',dbn.spent('insurance')) # Put a save menu
+            print_text('liesure and others',others)
 
         else:
-            print("There is no such option...")
-
+            logger.warning("\n{} : no such option.".format(choice_table))
 
 if __name__ == '__main__':
     sc = mainscript()
@@ -118,31 +152,35 @@ if __name__ == '__main__':
        1.Go to Script
        2.Check saved data
        3.Check income / exp balance
-       4.Exit/Quit
+       4.DB operations
+       5.Exit/Quit
        """)
         ans = input("What would you like to do? ")
         if ans == "1":
             sc.menu()
         elif ans == "2":
-            print(f'{fore.DARK_GREEN}{style.BOLD}### Old data for shopping ###{style.RESET}')
+            print_colorfull('dark_green','### Old data for shopping ###',style_='BOLD')
             dbn.see_saved('shopping')
             print(" ")
-            print(f'{fore.DARK_GREEN}{style.BOLD}### Old data for food ###{style.RESET}')
+            print_colorfull('dark_green',"### Old data for food ###", style_='BOLD')
             dbn.see_saved('nourriture')
         elif ans == "3":
             monthly=dbn.monthly_spent()
-            print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',sum(dbn.amount_catch(employer)),'Earned amounts: ',*dbn.amount_catch(employer),dbn.rent_income(loyer)[1],f'{style.RESET}')
-            print(f"Rent: {fore.RED} ", dbn.rent_income(loyer)[0],f'{style.RESET}')
+            print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',sum(dbn.amount_catch(employer)),
+                  'Earned amounts: ',*dbn.amount_catch(employer),dbn.rent_income(loyer)[1],f'{style.RESET}')
+            print_colorfull('red',"Rent: ",fonction=dbn.rent_income(loyer)[0])
             print(f"Credit Total: {fore.RED} ",round(dbn.addition(*dbn.amount_catch(credit)),2),f'{style.RESET}',
                 f'{fore.RED}',*dbn.amount_catch(credit),f'{style.RESET}')
             print(f"Credit Card Repayment: {fore.RED} ", round(dbn.addition(*dbn.amount_catch(credit_card_no)),2),f'{style.RESET}',
                   f'{fore.RED}',*dbn.amount_catch(credit_card_no),f'{style.RESET}')
             print(f"Bills (Telecom + electricity): {fore.RED}", dbn.addition(*dbn.amount_catch(*dbn.sql_queries("telecom")),*dbn.amount_catch(*dbn.sql_queries("electricity")))
                   ,f"{style.RESET}")
-            print(f"Insurance: {fore.RED}",dbn.spent('insurance'),f"{style.RESET}")
-            print(f"Total Expenses: {fore.RED}",monthly[2],f"{style.RESET}")
+            print_colorfull('red',"Insurance: ",fonction=dbn.spent('insurance'))
+            print_colorfull('red',"Total Expenses: ",fonction=monthly[2])
             print(f'Balance: {fore.GREEN}',monthly[1] if monthly[1] >= 0 else f'{fore.RED}'"{}".format(monthly[1]),f'{style.RESET}')
         elif ans == "4":
+            db_menu()
+        elif ans == "5":
             print("\n Goodbye")
             conn.close()
             break
