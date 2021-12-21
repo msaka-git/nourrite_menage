@@ -21,7 +21,7 @@ rowsa = config['excel_options']['rowsa']
 employer = "CTG LUXEMBOURG"
 loyer = "Loyer"
 credit = "NISSAN"
-credit_card_no = "LU030141471040210000"
+credit_card_no = "L"
 
 ########## END Local variables ######################
 
