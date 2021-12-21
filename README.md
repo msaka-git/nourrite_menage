@@ -1,5 +1,6 @@
 # nourrite_menage
 Calculate monthly expenses from excel file
+Webapp first structure. Will be merged with master repository (webapp).
 
 ## ORM database usage
 
