@@ -32,15 +32,23 @@ def sql_queries(object_):
             sub.append(b.lower()) # converts provider name from database to lower case.
     return sub
 
-def insert_data(table):
-    query = "select * from table_{} where t_date='{}' and t_spent='{}'".format(table,dt,amountTotal)
-    res = cur.execute(query)
-    if res:
-        print("Data already exist in DB")
-    else:
-        for a in dt:
-            sql1 = "insert into table_{} values(NULL,'{}','{}')".format(table,a, amountTotal)
-            cur.execute(sql1)
+def insert_data(table,income=None,salary=None,rent=None,credit=None,credit_card=None,bills=None,insurance=None,
+                balance=None):
+
+    for a in dt:
+        query = "select count(*) from table_{} where t_date='{}' and t_spent='{}'".format(table,a,amountTotal)
+        res_data = cur.execute(query)
+        res = [i for i in res_data.fetchall()[0]]
+        if res[0] >= 1:
+            print("Data already exist in DB")
+        else:
+            if table == 'balance_yearly':
+                sql_balance = "insert into table_{} values(NULL,'{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(
+                    table,a,income,salary,rent,credit,credit_card,bills,insurance,amountTotal,balance)
+                cur.execute(sql_balance)
+            else:
+                sql1 = "insert into table_{} values(NULL,'{}','{}')".format(table,a, amountTotal)
+                cur.execute(sql1)
             print("Data has been saved...")
             conn.commit()
 
