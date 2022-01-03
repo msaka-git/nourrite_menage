@@ -1,6 +1,7 @@
 import script
 from shared_mods.connection_module import conn,cur
 from shared_mods.logger_module import logger
+from shared_mods.table_operations import update
 import re
 from script import mainscript
 
@@ -33,7 +34,7 @@ def sql_queries(object_):
     return sub
 
 def insert_data(table,income=None,salary=None,rent=None,credit=None,credit_card=None,bills=None,insurance=None,
-                balance=None):
+                balance=None,total_expense=None):
 
     for a in dt:
         query = "select count(*) from table_{} where t_date='{}' and t_spent='{}'".format(table,a,amountTotal)
@@ -43,8 +44,8 @@ def insert_data(table,income=None,salary=None,rent=None,credit=None,credit_card=
             print("Data already exist in DB")
         else:
             if table == 'balance_yearly':
-                sql_balance = "insert into table_{} values(NULL,'{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(
-                    table,a,income,salary,rent,credit,credit_card,bills,insurance,amountTotal,balance)
+                sql_balance = "insert into table_{} values(NULL,'{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')"\
+                    .format(table,a,income,salary,rent,credit,credit_card,bills,insurance,total_expense,balance)
                 cur.execute(sql_balance)
             else:
                 sql1 = "insert into table_{} values(NULL,'{}','{}')".format(table,a, amountTotal)
@@ -53,22 +54,32 @@ def insert_data(table,income=None,salary=None,rent=None,credit=None,credit_card=
             conn.commit()
 
 def table_ops(table,action,t_date=None):
-    crt_statment_tdate = "create table '{}' ('id_table' INTEGER NOT NULL UNIQUE," \
-                   "'t_date' NUMERIC NOT NULL," \
-                   "'t_spent' NUMERIC NOT NULL, PRIMARY KEY('id_table' AUTOINCREMENT))".format('table_'+table)
-    crt_cust_statment = "create table '{}' ('id_customer' INTEGER NOT NULL UNIQUE," \
-                        "'t_customer' TEXT UNIQUE, PRIMARY KEY('id_customer' AUTOINCREMENT))".format('table_customer_'+table)
-    table_names_delete = ['table_{}'.format(table),'table_{}_{}'.format('customer',table)]
-
-    if action.lower() == 'create' and t_date.lower() == 'yes':
-        cur.execute(crt_statment_tdate)
-    if action.lower() == 'create_customer':
-        cur.execute(crt_cust_statment)
+    '''
+    table: from script.py
+    req[0-2] returns query statements.
+    '''
+    if action.lower() == 'create':
+        req = update('create',table=table)
+        req_ = req.tables()
+        if t_date.lower() == 'yes':
+            cur.execute(req_[0])
+        else:
+            cur.execute(req_[1])
     if action.lower() == 'delete':
-        for i in table_names_delete:
-            delete_statment = "drop table if exists {}".format(i)
-            cur.execute(delete_statment)
-
+        req = update('delete', table=table)
+        req_ = req.tables()
+        for i in req_[2]:
+            delete_statement = "drop table if exists {}".format(i)
+            cur.execute(delete_statement)
+    if action.lower() == 'update':
+        req = update('delete', table=table)
+        req.questions()
+        update_query = req.find_id()
+        print(update_query)
+        query = cur.execute(update_query)
+        update_id = [i for i in query.fetchall()[0]] # update_id[0] gives id_table number.
+        update_statement = req.data_update(id_table=update_id[0])
+        cur.execute(update_statement)
     conn.commit()
 
 def insert_customer(table):

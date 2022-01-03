@@ -4,6 +4,7 @@ from configparser import ConfigParser
 from colored import back, style, fore
 import time
 import shared_mods.db_ops as dbn
+import shared_mods.table_operations as tbops
 import tkinter as tk
 from tkinter import filedialog
 import pandas as pd
@@ -25,7 +26,6 @@ loyer = "Loyer"
 credit = "NISSAN"
 
 ########## END Local variables ######################
-
 def print_text(message, fonction=None):
     print("\nAmount spent for {}: ".format(message), fonction)
 
@@ -55,7 +55,9 @@ def db_menu():
     print('Operations are: \n'
           '1.Create table for expense savings\n'
           '2.Create customer table\n'
-          '3.Delete table\n')
+          '3.Delete table\n'
+          '4.Update data\n'
+          '5.Back\n')
     ans = input('Answer: ')
     if ans == '1':
         t_name = input("Table to create: ")
@@ -63,12 +65,17 @@ def db_menu():
         print_colorfull('green','Table {} created.'.format('table_'+t_name))
     if ans == '2':
         t_name = input("Table to create: ")
-        dbn.table_ops(t_name,'create_customer')
+        dbn.table_ops(t_name,'create',t_date='No')
         print_colorfull('green','Table {} created.'.format('table_customer_'+t_name))
     if ans == '3':
         t_name = input("Table to delete: ")
         dbn.table_ops(t_name,'delete')
         print_colorfull('green', 'All tables related to {} deleted'.format(t_name))
+    if ans == '4':
+        dbn.table_ops(table=None,action='update')
+        print_colorfull('green', 'Data updated.')
+    if ans == '5':
+        mainscript()
 
 def menu_choice(choice_,ch_table):
     '''
@@ -181,7 +188,7 @@ if __name__ == '__main__':
             print(f'Balance: {fore.GREEN}',monthly[1] if monthly[1] >= 0 else f'{fore.RED}'"{}".format(monthly[1]),f'{style.RESET}')
             menu_save('balance_yearly',monthly[0],sum(dbn.amount_catch(employer)),dbn.rent_income(loyer)[0],
                       round(dbn.addition(*dbn.amount_catch(credit)),2),round(dbn.addition(*dbn.amount_catch(credit_card_no)),2),
-                      dbn.addition(*dbn.amount_catch(*dbn.sql_queries("telecom"))),dbn.spent('insurance'),monthly[1])
+                      dbn.addition(*dbn.amount_catch(*dbn.sql_queries("telecom"))),dbn.spent('insurance'),monthly[1],monthly[2])
         elif ans == "4":
             db_menu()
         elif ans == "5":

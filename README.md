@@ -8,5 +8,5 @@ column=C,E,G,J # columns to read from excel
 rowsa=6        # Rows to start reading
 
 [personal_data]
-credit_card_no = "card number"
+credit_card_no = card number
 ````
