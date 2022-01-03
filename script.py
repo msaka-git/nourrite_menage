@@ -15,13 +15,14 @@ config = ConfigParser()
 config.read('config.ini')
 column = config['excel_options']['column']
 rowsa = config['excel_options']['rowsa']
+creditcard = config['personal_data']['credit_card_no']
+
 ########## END Configuration ########################
 
 ########## LOCAL VARIABLES ##########################
 employer = "CTG LUXEMBOURG"
 loyer = "Loyer"
 credit = "NISSAN"
-credit_card_no = "LU030141471040210000"
 
 ########## END Local variables ######################
 

@@ -3,3 +3,4 @@ test2.py
 venv/
 .idea/
 database.*
+config.ini
