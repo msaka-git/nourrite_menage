@@ -15,7 +15,7 @@ config = ConfigParser()
 config.read('config.ini')
 column = config['excel_options']['column']
 rowsa = config['excel_options']['rowsa']
-creditcard = config['personal_data']['credit_card_no']
+credit_card_no = config['personal_data']['credit_card_no']
 
 ########## END Configuration ########################
 
