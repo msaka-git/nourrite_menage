@@ -41,10 +41,10 @@ def print_colorfull(color,message,style_=None,fonction=None):
     if color and fonction:
         print('{}'.format(message)+colors[color],fonction,f"{style.RESET}")
 
-def menu_save(table):
+def menu_save(table,*args):
     choice_save = input("\nDo you want to save ? (y/n): ")
     if choice_save == 'y' or choice_save == 'Y':
-        dbn.insert_data(table)
+        dbn.insert_data(table,*args)
     elif choice_save == 'n' or choice_save == 'N':
         print_colorfull('red',"Not saved.")
     else:
@@ -178,6 +178,9 @@ if __name__ == '__main__':
             print_colorfull('red',"Insurance: ",fonction=dbn.spent('insurance'))
             print_colorfull('red',"Total Expenses: ",fonction=monthly[2])
             print(f'Balance: {fore.GREEN}',monthly[1] if monthly[1] >= 0 else f'{fore.RED}'"{}".format(monthly[1]),f'{style.RESET}')
+            menu_save('balance_yearly',monthly[0],sum(dbn.amount_catch(employer)),dbn.rent_income(loyer)[0],
+                      round(dbn.addition(*dbn.amount_catch(credit)),2),round(dbn.addition(*dbn.amount_catch(credit_card_no)),2),
+                      dbn.addition(*dbn.amount_catch(*dbn.sql_queries("telecom"))),dbn.spent('insurance'),monthly[1])
         elif ans == "4":
             db_menu()
         elif ans == "5":
