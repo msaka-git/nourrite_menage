@@ -143,9 +143,9 @@ class mainscript:
             print_text('investment',dbn.spent_investment())
             menu_save('investment')
             print_text('Credit card repayment: ',round(dbn.addition(*dbn.amount_catch(credit_card_no)),2))
-            # menu save for credit card
+            menu_save('credit_card')
             print_text('Bills: ',round(dbn.addition(dbn.spent('telecom'),dbn.spent('electricity')))) # telecom + electricty
-            # menu save for bills
+            menu_save('bills')
             print_text('insurances',dbn.spent('insurance')) # Put a save menu
             menu_save('insurance')
             others = dbn.spent_liesure_others()
@@ -190,7 +190,7 @@ if __name__ == '__main__':
             print(f'Balance: {fore.GREEN}',monthly[1] if monthly[1] >= 0 else f'{fore.RED}'"{}".format(monthly[1]),f'{style.RESET}')
             menu_save('balance_yearly',monthly[0],sum(dbn.amount_catch(employer)),dbn.rent_income(loyer)[0],
                       round(dbn.addition(*dbn.amount_catch(credit)),2),round(dbn.addition(*dbn.amount_catch(credit_card_no)),2),
-                      dbn.addition(*dbn.amount_catch(*dbn.sql_queries("telecom"))),dbn.spent('insurance'),monthly[1],monthly[2])
+                      round(dbn.addition(dbn.spent('telecom'),dbn.spent('electricity'))),dbn.spent('insurance'),monthly[1],monthly[2])
         elif ans == "4":
             db_menu()
         elif ans == "5":

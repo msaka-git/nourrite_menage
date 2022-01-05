@@ -47,7 +47,14 @@ def insert_data(table,income=None,salary=None,rent=None,credit=None,credit_card=
                 sql_balance = "insert into table_{} values(NULL,'{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')"\
                     .format(table,a,income,salary,rent,credit,credit_card,bills,insurance,total_expense,balance)
                 cur.execute(sql_balance)
-
+            elif table == 'bills':
+                sql1 = "insert into table_{} values(NULL,'{}','{}')".format(table,a,
+                        round(addition(spent('telecom'),spent('electricity'))))
+                cur.execute(sql1)
+            elif table == 'credit_card':
+                sql1 = "insert into table_{} values(NULL,'{}','{}')".format(table,a,
+                        round(addition(*amount_catch(script.credit_card_no)),2))
+                cur.execute(sql1)
             else:
                 sql1 = "insert into table_{} values(NULL,'{}','{}')".format(table,a, income if table == 'liesure' else amountTotal)
                 cur.execute(sql1)
