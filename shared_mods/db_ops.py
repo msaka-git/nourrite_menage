@@ -47,8 +47,9 @@ def insert_data(table,income=None,salary=None,rent=None,credit=None,credit_card=
                 sql_balance = "insert into table_{} values(NULL,'{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')"\
                     .format(table,a,income,salary,rent,credit,credit_card,bills,insurance,total_expense,balance)
                 cur.execute(sql_balance)
+
             else:
-                sql1 = "insert into table_{} values(NULL,'{}','{}')".format(table,a, amountTotal)
+                sql1 = "insert into table_{} values(NULL,'{}','{}')".format(table,a, income if table == 'liesure' else amountTotal)
                 cur.execute(sql1)
             print("Data has been saved...")
             conn.commit()
@@ -75,7 +76,6 @@ def table_ops(table,action,t_date=None):
         req = update('delete', table=table)
         req.questions()
         update_query = req.find_id()
-        print(update_query)
         query = cur.execute(update_query)
         update_id = [i for i in query.fetchall()[0]] # update_id[0] gives id_table number.
         update_statement = req.data_update(id_table=update_id[0])
@@ -136,7 +136,9 @@ def add_delete(object_):
 
 def spent(object_):
     '''
-    object must be food, shopping, liesure or all
+    Object must be food, shopping, liesure or all.
+    Telecom and others expenses can be calculated as well.
+    Ex: spent("telecom"), will calculate telecom expenses according to existing customers in DB, related customer table.
     Value or pattern must be present in DB
     '''
 
@@ -156,7 +158,6 @@ def spent(object_):
     return amountTotal
 
 ##### Liesure and others #################
-#@amount_retriever
 def spent_investment():
     """
     sql_spent calculates iNG ARIA funds. String Returned from DB.

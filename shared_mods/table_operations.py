@@ -6,14 +6,6 @@ class update:
         self.column = column
         self.ex_data = ex_data
         self.ch_data = ch_data
-        # self.income = income
-        # self.salary = salary
-        # self.rent = rent
-        # self.credit = credit
-        # self.credit_card = credit_card
-        # self.bills = bills
-        # self.insurance = insurance
-        # self.balance = balance
 
     def questions(self):
         self.table = input("Please choose table: ")
@@ -34,7 +26,6 @@ class update:
             query_update = "update table_{} set t_{} = '{}' where id_customer = {}".format(self.table,self.column,self.ch_data,id_table)
         else:
             query_update = "update table_{} set t_{} = {} where id_table = {}".format(self.table,self.column,self.ch_data,id_table)
-        print(query_update)
         return query_update
 
     def tables(self):

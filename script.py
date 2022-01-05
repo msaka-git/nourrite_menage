@@ -127,28 +127,30 @@ class mainscript:
         return bankFile
 
     def menu(self):
-        choice_table = input("Make your choice food, shopping, liesure? (food/shopping/liesure/all): ")
+        choice_table = input("Make your choice food, shopping, all? (food/shopping/all): ")
 
         if choice_table == 'food' or choice_table == 'FOOD':
-            menu_choice('food','nourriture')
+            menu_choice('food','food')
 
-        ##### MENU FOR SHOPPING #####################
         elif choice_table == 'shopping' or choice_table == 'SHOPPING':
             menu_choice('shopping','shopping')
 
-        ###### MENU FOR LIESURE #######
-        ## TO ADD
-        ###############################
         elif choice_table == 'all' or choice_table == 'ALL':
             print_text('food',dbn.spent('food'))
             menu_save('food')
             print_text('shopping',dbn.spent('shopping'))
             menu_save('shopping')
-            others = dbn.spent_liesure_others()
             print_text('investment',dbn.spent_investment())
             menu_save('investment')
+            print_text('Credit card repayment: ',round(dbn.addition(*dbn.amount_catch(credit_card_no)),2))
+            # menu save for credit card
+            print_text('Bills: ',round(dbn.addition(dbn.spent('telecom'),dbn.spent('electricity')))) # telecom + electricty
+            # menu save for bills
             print_text('insurances',dbn.spent('insurance')) # Put a save menu
+            menu_save('insurance')
+            others = dbn.spent_liesure_others()
             print_text('liesure and others',others)
+            menu_save('liesure',others) # positional argument of 'income' parameter. To save the amount 'others' into DB.
 
         else:
             logger.warning("\n{} : no such option.".format(choice_table))
@@ -171,7 +173,7 @@ if __name__ == '__main__':
             dbn.see_saved('shopping')
             print(" ")
             print_colorfull('dark_green',"### Old data for food ###", style_='BOLD')
-            dbn.see_saved('nourriture')
+            dbn.see_saved('food')
         elif ans == "3":
             monthly=dbn.monthly_spent()
             print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',sum(dbn.amount_catch(employer)),
