@@ -2,21 +2,47 @@
 
 {% block body %}
 
-<div class="jumbotron text-left">
+<div class="jumbotron text-center">
     <h3>Welcome to Budget Manager</h3>
 
 </div>
 
 <table class="table">
     <thead>
-    <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Nourriture Spent</th>
-        <th scope="col">Date</th>
+<!--    <tr>-->
+<!--        <th scope="col">Id</th>-->
+<!--        <th scope="col">Nourriture Spent</th>-->
+<!--        <th scope="col">Date</th>-->
 
-    </tr>
+<!--    </tr>-->
+
+
     </thead>
+    <h3>Upload your file</h3>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="document">
+        <button type="submit" class="btn btn-success">Upload File</button>
+
+    </form>
+    <thead>
+        <tr>
+            <th scope="col">File name: {{ name }}</th>
+
+        </tr>
+        <tr>
+            <th scope="col">Size: {{ size }}</th>
+
+        </tr>
+        <tr>
+            <th scope="col">Your File:</th>
+            <th scope="col"><a href="{{file_url}}">{{ file_url }}</a></th>
+
+        </tr>
+    </thead>
+
     <tbody>
+
 
 <!--    <tr>-->
 <!--        <th scope="row">1</th>-->

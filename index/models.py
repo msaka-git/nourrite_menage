@@ -5,6 +5,7 @@ class list_index(models.Model):
     author = models.ForeignKey("auth.user",on_delete=models.CASCADE)
     date = models.DateField(name="added_date",auto_now=True)
 
+
 class customer_food(models.Model):
     customer = models.CharField(max_length=70,null=True)
 
