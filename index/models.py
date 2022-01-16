@@ -22,6 +22,7 @@ class nourriture(models.Model):
     nourriture_date = models.DateField()
     nourriture_spent = models.FloatField(null=False)
 
+
 class shopping(models.Model):
     shopping_date = models.DateField()
     shopping_spent = models.FloatField(null=False)

@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="jumbotron text-center">
+    <h3>Welcome to Budget Manager</h3>
+
+</div>
+{% if all_data %}
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Food Spent</th>
+        <th scope="col">Date</th>
+
+    </tr>
+    </thead>
+    <tbody>
+
+        {% for data in all_data %}
+        <tr>
+            <th scope="row">{{data.id}}</th>
+            <td>{{data.nourriture_spent}}</td>
+            <td>{{data.nourriture_date}}</td>
+            <td><a href="/food/update/{{data.id}}" class="btn btn-warning">Update</a></td>
+            <td><a href="/food/delete/{{data.id}}" class="btn btn-danger">Delete</a></td>
+
+        </tr>
+
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-danger">
+            You don't have ant data...
+        </div>
+    {% endif %}
+<!--    <tr>-->
+<!--        <th scope="row">1</th>-->
+<!--        <td>Mark</td>-->
+<!--        <td>Otto</td>-->
+
+<!--    </tr>-->
+
+    </tbody>
+    <td><span style="font-weight:bold">Total Spent:</span></td>
+    <td>{{sum_spent}}</td>
+</table>
+
+{% endblock body %}

@@ -9,14 +9,18 @@ P
  index/migrations/0001_initial.py,c\0\c07f32e6d51e42fe1ff93f8e819b844709aa7932
 [
 +index/migrations/0002_auto_20211031_1416.py,f\5\f5e8fc2ff78f18d12254cb912de911dfeaf5d73f
-:
-
-.gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
 M
 nourriture_webapp/__init__.py,2\5\25ca54180d6d2fb426042cfceef610852865e0df
->
-index/admin.py,3\3\337139bf9b0b9a4b9789eb23d2a6e31de4cbc9df
 A
 index/__init__.py,6\0\605a97a192200e47b1904aa33c5baa8901c625a9
 9
 	README.md,8\e\8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
+:
+
+.gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
+>
+index/tests.py,4\1\41fa824641f0f4baca9e651c66e6a4dd1209a462
+@
+static/style.css,e\a\ea7b422455b8b60eb5b1123f19040f20653b36a4
+N
+templates/includes/navbar.html,f\2\f2f4b4c84c73b1a50cddb14c388363225716d069
