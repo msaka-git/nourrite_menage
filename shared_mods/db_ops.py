@@ -5,9 +5,6 @@ from shared_mods.table_operations import update
 import re
 from script import mainscript
 
-#amountTotal_food=float(0)
-#amountTotal_shopping=float(0)
-
 ins=mainscript()
 
 f=ins.root_win()
@@ -36,6 +33,7 @@ def sql_queries(object_):
 def insert_data(table,income=None,salary=None,rent=None,credit=None,credit_card=None,bills=None,insurance=None,
                 balance=None,total_expense=None):
 
+    sql1="insert into table_{} values(NULL,'{}','{}')"
     for a in dt:
         query = "select count(*) from table_{} where t_date='{}' and t_spent='{}'".format(table,a,amountTotal)
         res_data = cur.execute(query)
@@ -48,15 +46,15 @@ def insert_data(table,income=None,salary=None,rent=None,credit=None,credit_card=
                     .format(table,a,income,salary,rent,credit,credit_card,bills,insurance,total_expense,balance)
                 cur.execute(sql_balance)
             elif table == 'bills':
-                sql1 = "insert into table_{} values(NULL,'{}','{}')".format(table,a,
-                        round(addition(spent('telecom'),spent('electricity'))))
+                sql1=sql1.format(table,a,
+                            round(addition(spent('telecom'),spent('electricity'))))
                 cur.execute(sql1)
             elif table == 'credit_card':
-                sql1 = "insert into table_{} values(NULL,'{}','{}')".format(table,a,
-                        round(addition(*amount_catch(script.credit_card_no)),2))
+                sql1 = sql1.format(table,a,
+                                   round(addition(*amount_catch(script.credit_card_no)),2))
                 cur.execute(sql1)
             else:
-                sql1 = "insert into table_{} values(NULL,'{}','{}')".format(table,a, income if table == 'liesure' else amountTotal)
+                sql1 = sql1.format(table,a, income if table == 'liesure' else amountTotal)
                 cur.execute(sql1)
             print("Data has been saved...")
             conn.commit()
