@@ -178,10 +178,11 @@ def spent_liesure_others():
     # Return all values having 'Purchase' in operations header.
     value_all=['PURCHASE']
     LISTe = float(0) # all amount was spent
+
     for i in value_all:
         all_spent_amounts = data[data['Operation'].str.contains(i,flags=re.IGNORECASE)]
         LISTe = sum(all_spent_amounts['Amount'])
-    expenses_total = addition(spent("food"),spent("shopping"),spent_investment()) # excluding bills
+    expenses_total = addition(spent("food"),spent("shopping"),spent_investment(),-spent('liesure')) # excluding bills
     amount_spent_li_ot = round(LISTe - expenses_total,2)
 
     return amount_spent_li_ot
@@ -229,10 +230,11 @@ def monthly_spent():
     '''
 
     others = spent_liesure_others()
+
     expenses_total = round(addition(spent("food"),spent("shopping"),others,rent_income(script.loyer)[0],spent("telecom"),spent("electricity"),
                                      sum(amount_catch(script.credit)),sum(amount_catch(script.credit_card_no)),
                                     spent('insurance'),spent_investment(),2))
-    income = sum(amount_catch(script.employer)) + sum(sale('SALE')) + rent_income(script.loyer)[1]
+    income = sum(amount_catch(script.employer)) + sum(sale('SALE')) + rent_income(script.loyer)[1] + sum(amount_catch(script.remobourse_cns))
     income = round(income,2)
     balance = round(income - (-expenses_total),2)
 

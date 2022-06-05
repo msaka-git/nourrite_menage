@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import logging
+import sys
 from configparser import ConfigParser
 from colored import back, style, fore
 import time
@@ -21,7 +22,9 @@ credit_card_no = config['personal_data']['credit_card_no']
 ########## END Configuration ########################
 
 ########## LOCAL VARIABLES ##########################
-employer = "CTG LUXEMBOURG"
+#employer = "CTG LUXEMBOURG"
+employer = "PROXIMUS LUXEMBOURG SA"
+remobourse_cns = "CNS-MALADIE REMBOURSEMENT"
 loyer = "Loyer"
 credit = "NISSAN"
 
@@ -118,13 +121,18 @@ class mainscript:
         return file_path
 
     def file_select(self, file):
-        bankFile = pd.read_excel(r'{}'.format(file), usecols='{}'.format(column), skiprows=[0,1,2,3,4,5])
-        bankFile.dropna(inplace=False)
-        pd.set_option('display.max_columns', None)
-        pd.set_option('max_rows', None)
+        try:
 
-        print(file)
-        return bankFile
+            bankFile = pd.read_excel(r'{}'.format(file), usecols='{}'.format(column), skiprows=[0,1,2,3,4,5])
+            bankFile.dropna(inplace=False)
+            pd.set_option('display.max_columns', None)
+            pd.set_option('max_rows', None)
+
+            print(file)
+            return bankFile
+        except FileNotFoundError:
+            print("You cancelled the operation")
+            sys.exit(0)
 
     def menu(self):
         choice_table = input("Make your choice food, shopping, all? (food/shopping/all): ")
@@ -174,6 +182,15 @@ if __name__ == '__main__':
             print(" ")
             print_colorfull('dark_green',"### Old data for food ###", style_='BOLD')
             dbn.see_saved('food')
+            print_colorfull('dark_green', '### Old data for investment ###', style_='BOLD')
+            dbn.see_saved('investment')
+            print(" ")
+            print_colorfull('dark_green', '### Old data for insurance ###', style_='BOLD')
+            dbn.see_saved('insurance')
+            print(" ")
+            print_colorfull('dark_green', '### Old data for liesure ###', style_='BOLD')
+            dbn.see_saved('liesure')
+            print(" ")
         elif ans == "3":
             monthly=dbn.monthly_spent()
             print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',sum(dbn.amount_catch(employer)),
