@@ -159,7 +159,6 @@ def spent(object_):
 
     global amountTotal
     amountTotal = round(sum(LIST), 2)
-
     return amountTotal
 
 ##### Liesure and others #################
@@ -184,7 +183,6 @@ def spent_liesure_others():
         LISTe = sum(all_spent_amounts['Amount'])
     expenses_total = addition(spent("food"),spent("shopping"),spent_investment(),-spent('liesure')) # excluding bills
     amount_spent_li_ot = round(LISTe - expenses_total,2)
-
     return amount_spent_li_ot
 
 ########## Income /exp balance
@@ -220,7 +218,6 @@ def addition(*args):
     res = 0
     for i in args:
         res += i
-
     return res
 
 def monthly_spent():
@@ -237,6 +234,5 @@ def monthly_spent():
     income = sum(amount_catch(script.employer)) + sum(sale('SALE')) + rent_income(script.loyer)[1] + sum(amount_catch(script.remobourse_cns))
     income = round(income,2)
     balance = round(income - (-expenses_total),2)
-
     return income,balance,expenses_total
 
