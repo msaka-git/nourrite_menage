@@ -112,6 +112,8 @@ def amount_retriever(func):
 
     def wrapper(*args):
         islem = func(*args)
+        #print("islem 0: ",islem[0])
+        #print("islem 1: ", islem[1])
         expense_data = data[data['{}'.format(islem[0])].str.contains(islem[1],flags=re.IGNORECASE, na=False,regex=True)]
         expense_amount = [float(i) for i in expense_data['Amount']]
         return expense_amount
@@ -151,6 +153,7 @@ def spent(object_):
 
     for i in sql_queries(object_):
         operation_Name = data[data['Operation'].str.contains(i,flags=re.IGNORECASE)] # flags= ignore case sensitivity in excel file.
+        #print("operation name: ",operation_Name)
         amounts = operation_Name["Amount"]
 
         for row in amounts:
@@ -173,6 +176,8 @@ def spent_investment():
     return res
 
 def spent_liesure_others():
+    # This function calculates the remaining from purchase and liesures, this is called other amount,
+    # which can't be found in DB or unidentified.
     # amount_spent_li_ot=others
     # Return all values having 'Purchase' in operations header.
     value_all=['PURCHASE']
@@ -180,10 +185,31 @@ def spent_liesure_others():
 
     for i in value_all:
         all_spent_amounts = data[data['Operation'].str.contains(i,flags=re.IGNORECASE)]
-        LISTe = sum(all_spent_amounts['Amount'])
-    expenses_total = addition(spent("food"),spent("shopping"),spent_investment(),-spent('liesure')) # excluding bills
-    amount_spent_li_ot = round(LISTe - expenses_total,2)
-    return amount_spent_li_ot
+        LISTe = sum(all_spent_amounts['Amount']) # All purchases, "purchased tag in excel file"
+
+    print("food: ", spent("food"))
+    print("shopping: ", spent("shopping"))
+    print("investment: ", spent_investment())
+    print("lieuure: ", spent("liesure"))
+    expenses_total = addition(spent("food"),spent("shopping"),spent_investment(),spent("liesure"))
+    expenses_total = - (expenses_total) # convert - to + in order to substract correctly.
+    LISTe = - (LISTe) # convert - to + in order to substract correctly.
+    print("Expenses total: ",expenses_total)
+    print("ALL Purchased amount: ", LISTe)
+    spent_others = round(expenses_total - LISTe)
+    print("sepnt others: ",spent_others)
+
+    # expenses_total = addition(spent("food"),spent("shopping"),spent_investment()) # excluding bills
+    # #
+    #
+    # #
+    #
+    # print("expenses total: ",expenses_total)
+    # amount_spent_li_ot = round(LISTe - expenses_total,2)
+    # #print("LISTe: ",LISTe)
+    #
+    # print("amount_spent_li_ot: ",amount_spent_li_ot)
+    # return amount_spent_li_ot
 
 ########## Income /exp balance
 @amount_retriever
@@ -219,20 +245,20 @@ def addition(*args):
     for i in args:
         res += i
     return res
-
-def monthly_spent():
-    '''
-    return only expenses. Without investment amount.
-    others = all PURCHASEd items - (shopping + food)
-    '''
-
-    others = spent_liesure_others()
-
-    expenses_total = round(addition(spent("food"),spent("shopping"),others,rent_income(script.loyer)[0],spent("telecom"),spent("electricity"),
-                                     sum(amount_catch(script.credit)),sum(amount_catch(script.credit_card_no)),
-                                    spent('insurance'),spent_investment(),2))
-    income = sum(amount_catch(script.employer)) + sum(sale('SALE')) + rent_income(script.loyer)[1] + sum(amount_catch(script.remobourse_cns))
-    income = round(income,2)
-    balance = round(income - (-expenses_total),2)
-    return income,balance,expenses_total
+spent_liesure_others()
+# def monthly_spent():
+#     '''
+#     return only expenses. Without investment amount.
+#     others = all PURCHASEd items - (shopping + food)
+#     '''
+#
+#     others = spent_liesure_others()
+#
+#     expenses_total = round(addition(spent("food"),spent("shopping"),others,rent_income(script.loyer)[0],spent("telecom"),spent("electricity"),
+#                                      sum(amount_catch(script.credit)),sum(amount_catch(script.credit_card_no)),
+#                                     spent('insurance'),spent_investment(),2))
+#     income = sum(amount_catch(script.employer)) + sum(sale('SALE')) + rent_income(script.loyer)[1] + sum(amount_catch(script.remobourse_cns))
+#     income = round(income,2)
+#     balance = round(income - (-expenses_total),2)
+#     return income,balance,expenses_total
 

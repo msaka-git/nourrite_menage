@@ -126,7 +126,7 @@ class mainscript:
             bankFile = pd.read_excel(r'{}'.format(file), usecols='{}'.format(column), skiprows=[0,1,2,3,4,5])
             bankFile.dropna(inplace=False)
             pd.set_option('display.max_columns', None)
-            pd.set_option('max_rows', None)
+            pd.set_option('display.max_rows', None)
 
             print(file)
             return bankFile
