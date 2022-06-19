@@ -187,18 +187,18 @@ def spent_liesure_others():
         all_spent_amounts = data[data['Operation'].str.contains(i,flags=re.IGNORECASE)]
         LISTe = sum(all_spent_amounts['Amount']) # All purchases, "purchased tag in excel file"
 
-    print("food: ", spent("food"))
-    print("shopping: ", spent("shopping"))
-    print("investment: ", spent_investment())
-    print("lieuure: ", spent("liesure"))
+    # print("food: ", spent("food"))
+    # print("shopping: ", spent("shopping"))
+    # print("investment: ", spent_investment())
+    # print("lieuure: ", spent("liesure"))
     expenses_total = addition(spent("food"),spent("shopping"),spent_investment(),spent("liesure"))
     expenses_total = - (expenses_total) # convert - to + in order to substract correctly.
     LISTe = - (LISTe) # convert - to + in order to substract correctly.
     print("Expenses total: ",expenses_total)
     print("ALL Purchased amount: ", LISTe)
     spent_others = round((expenses_total - LISTe),2) # purchased but not included in DB (others)
-
-    print("sepnt others: ",spent_others)
+# correct total expenses: 3.551,25
+    #print("sepnt others: ",spent_others)
     return spent_others
     # expenses_total = addition(spent("food"),spent("shopping"),spent_investment()) # excluding bills
     # #
@@ -255,9 +255,23 @@ def monthly_spent():
 
     others = spent_liesure_others()
 
-    expenses_total = round(addition(spent("food"),spent("shopping"),others,rent_income(script.loyer)[0],spent("telecom"),spent("electricity"),
+    expenses_total = round(addition(spent("food"),spent("shopping"),others,rent_income(script.loyer)[0],spent("telecom"),spent("electricity"),spent('liesure'),
                                      sum(amount_catch(script.credit)),sum(amount_catch(script.credit_card_no)),
-                                    spent('insurance'),spent_investment(),2))
+                                    spent('insurance'),spent_investment()),2)
+    print("expenses_total_me: ",expenses_total)
+    print("rounded expenses: ", round(expenses_total),2)
+    print("food: ", spent("food"))
+    print("shopping: ", spent("shopping"))
+    print("investment: ", spent_investment())
+    print("lieuure: ", spent("liesure"))
+    print("other: ",others)
+    print("rent_income: ",rent_income(script.loyer)[0])
+    print("telecom: ",spent("telecom"))
+    print("electricty: ", spent("electricity"))
+    print("credit: ",sum(amount_catch(script.credit)))
+    print("Credit card: ", sum(amount_catch(script.credit_card_no)))
+    print("insurance: ",spent("insurance"))
+
     #credit=sum(amount_catch(script.credit))
     #credit_card=sum(amount_catch(script.credit_card_no))
 

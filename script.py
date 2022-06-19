@@ -22,8 +22,8 @@ credit_card_no = config['personal_data']['credit_card_no']
 ########## END Configuration ########################
 
 ########## LOCAL VARIABLES ##########################
-#employer = "CTG LUXEMBOURG"
-employer = "PROXIMUS LUXEMBOURG SA"
+employer = "CTG LUXEMBOURG"
+#employer = "PROXIMUS LUXEMBOURG SA"
 remobourse_cns = "CNS-MALADIE REMBOURSEMENT"
 loyer = "Loyer"
 credit = "NISSAN"
