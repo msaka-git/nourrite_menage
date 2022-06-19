@@ -196,19 +196,20 @@ def spent_liesure_others():
     LISTe = - (LISTe) # convert - to + in order to substract correctly.
     print("Expenses total: ",expenses_total)
     print("ALL Purchased amount: ", LISTe)
-    spent_others = round(expenses_total - LISTe)
-    print("sepnt others: ",spent_others)
+    spent_others = round((expenses_total - LISTe),2) # purchased but not included in DB (others)
 
+    print("sepnt others: ",spent_others)
+    return spent_others
     # expenses_total = addition(spent("food"),spent("shopping"),spent_investment()) # excluding bills
     # #
     #
     # #
     #
     # print("expenses total: ",expenses_total)
-    # amount_spent_li_ot = round(LISTe - expenses_total,2)
+    #amount_spent_li_ot = round(LISTe - expenses_total,2)
     # #print("LISTe: ",LISTe)
     #
-    # print("amount_spent_li_ot: ",amount_spent_li_ot)
+    #print("amount_spent_li_ot: ",amount_spent_li_ot)
     # return amount_spent_li_ot
 
 ########## Income /exp balance
@@ -245,20 +246,24 @@ def addition(*args):
     for i in args:
         res += i
     return res
-spent_liesure_others()
-# def monthly_spent():
-#     '''
-#     return only expenses. Without investment amount.
-#     others = all PURCHASEd items - (shopping + food)
-#     '''
-#
-#     others = spent_liesure_others()
-#
-#     expenses_total = round(addition(spent("food"),spent("shopping"),others,rent_income(script.loyer)[0],spent("telecom"),spent("electricity"),
-#                                      sum(amount_catch(script.credit)),sum(amount_catch(script.credit_card_no)),
-#                                     spent('insurance'),spent_investment(),2))
-#     income = sum(amount_catch(script.employer)) + sum(sale('SALE')) + rent_income(script.loyer)[1] + sum(amount_catch(script.remobourse_cns))
-#     income = round(income,2)
-#     balance = round(income - (-expenses_total),2)
-#     return income,balance,expenses_total
+#spent_liesure_others()
+def monthly_spent():
+    '''
+    return only expenses. Without investment amount.
+    others = all PURCHASEd items - (shopping + food)
+    '''
+
+    others = spent_liesure_others()
+
+    expenses_total = round(addition(spent("food"),spent("shopping"),others,rent_income(script.loyer)[0],spent("telecom"),spent("electricity"),
+                                     sum(amount_catch(script.credit)),sum(amount_catch(script.credit_card_no)),
+                                    spent('insurance'),spent_investment(),2))
+    #credit=sum(amount_catch(script.credit))
+    #credit_card=sum(amount_catch(script.credit_card_no))
+
+    income = sum(amount_catch(script.employer)) + sum(sale('SALE')) + rent_income(script.loyer)[1] + sum(amount_catch(script.remobourse_cns))
+    income = round(income,2)
+    balance = round(income - (-expenses_total),2)
+
+    return income,balance,expenses_total
 
