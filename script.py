@@ -18,17 +18,13 @@ config.read('config.ini')
 column = config['excel_options']['column']
 rowsa = config['excel_options']['rowsa']
 credit_card_no = config['personal_data']['credit_card_no']
+employer = config['personal_data']['employer']
+remobourse_cns = config['personal_data']['remobourse_cns']
+loyer = config['personal_data']['loyer']
+credit = config['personal_data']['credit']
 
 ########## END Configuration ########################
 
-########## LOCAL VARIABLES ##########################
-#employer = "CTG LUXEMBOURG"
-employer = "PROXIMUS LUXEMBOURG SA"
-remobourse_cns = "CNS-MALADIE REMBOURSEMENT"
-loyer = "Loyer"
-credit = "NISSAN"
-
-########## END Local variables ######################
 def print_text(message, fonction=None):
     print("\nAmount spent for {}: ".format(message), fonction)
 
@@ -148,7 +144,7 @@ class mainscript:
             menu_save('food')
             print_text('shopping',dbn.spent('shopping'))
             menu_save('shopping')
-            print_text('investment',dbn.spent_investment())
+            print_text('investment',dbn.sp_investment())
             menu_save('investment')
             print_text('Credit card repayment: ',round(dbn.addition(*dbn.amount_catch(credit_card_no)),2))
             menu_save('credit_card')
@@ -156,7 +152,7 @@ class mainscript:
             menu_save('bills')
             print_text('insurances',dbn.spent('insurance')) # Put a save menu
             menu_save('insurance')
-            others = dbn.spent_liesure_others()
+            others = dbn.addition(dbn.sp_liesure(),dbn.sp_others()[0])
             print_text('liesure and others',others)
             menu_save('liesure',others) # positional argument of 'income' parameter. To save the amount 'others' into DB.
 
