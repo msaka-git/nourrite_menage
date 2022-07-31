@@ -31,7 +31,7 @@ def sql_queries(object_):
     return sub
 
 def insert_data(table,income=None,salary=None,rent=None,credit=None,credit_card=None,bills=None,insurance=None,
-                balance=None,total_expense=None):
+                balance=None,total_expense=None,investment=None):
 
     sql1="insert into table_{} values(NULL,'{}','{}')"
     for a in dt:
@@ -42,8 +42,8 @@ def insert_data(table,income=None,salary=None,rent=None,credit=None,credit_card=
             print("Data already exist in DB")
         else:
             if table == 'balance_yearly':
-                sql_balance = "insert into table_{} values(NULL,'{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')"\
-                    .format(table,a,income,salary,rent,credit,credit_card,bills,insurance,total_expense,balance)
+                sql_balance = "insert into table_{} values(NULL,'{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')"\
+                    .format(table,a,income,salary,rent,credit,credit_card,bills,insurance,total_expense,investment,balance)
                 cur.execute(sql_balance)
             elif table == 'bills':
                 sql1=sql1.format(table,a,
@@ -165,7 +165,56 @@ def spent(object_):
     return amountTotal
 
 ##### Liesure and others #################
-def spent_investment():
+
+def all_purchases():
+    '''
+    Total purchased amounts
+
+    '''
+    value_all = ['PURCHASE']
+    LISTe = float(0)  # all amount was spent
+
+    for i in value_all:
+        all_spent_amounts = data[data['Operation'].str.contains(i, flags=re.IGNORECASE)]
+        LISTe = round(sum(all_spent_amounts['Amount']),2)  # All purchases, "purchased tag in excel file"
+    #print(LISTe)
+    return LISTe
+
+def sp_liesure():
+    spent_liesure = spent('liesure')
+    #print(spent_liesure)
+    return spent_liesure
+
+def sp_food():
+    spent_food = spent('food')
+    #print(spent_food)
+    return spent_food
+
+def sp_shopping():
+    spent_shopping = spent('shopping')
+    #print(spent_shopping)
+    return spent_shopping
+
+def sp_telecom():
+    '''
+    Spent for fix internet and mobile lines
+
+    '''
+    spent_telecom = spent('telecom')
+    #print(spent_telecom)
+    return spent_telecom
+
+def sp_electricty():
+    spent_electricity = spent('electricity')
+    #print(spent_electricity)
+    return spent_electricity
+
+def sp_insurance():
+    spent_insurance = spent('insurance')
+    #print(spent_insurance)
+    return spent_insurance
+
+def sp_investment():
     """
     sql_spent calculates iNG ARIA funds. String Returned from DB.
     sql_investment_other is any other investments such as bought shares in stock exchange.
@@ -175,44 +224,53 @@ def spent_investment():
     res = sql_spent + spent_investment_other
     return res
 
-def spent_liesure_others():
-    # This function calculates the remaining from purchase and liesures, this is called other amount,
-    # which can't be found in DB or unidentified.
-    # amount_spent_li_ot=others
-    # Return all values having 'Purchase' in operations header.
-    value_all=['PURCHASE']
-    LISTe = float(0) # all amount was spent
+def sp_atm_withdrawls():
+    spent_withdrawls = amount_pattern('WITHDRAWAL')
+    #print(sum(spent_withdrawls))
+    return sum(spent_withdrawls)
 
-    for i in value_all:
-        all_spent_amounts = data[data['Operation'].str.contains(i,flags=re.IGNORECASE)]
-        LISTe = sum(all_spent_amounts['Amount']) # All purchases, "purchased tag in excel file"
+def sp_others():
+    '''
 
-    # print("food: ", spent("food"))
-    # print("shopping: ", spent("shopping"))
-    # print("investment: ", spent_investment())
-    # print("lieuure: ", spent("liesure"))
-    expenses_total = addition(spent("food"),spent("shopping"),spent_investment(),spent("liesure"))
-    expenses_total = - (expenses_total) # convert - to + in order to substract correctly.
-    LISTe = - (LISTe) # convert - to + in order to substract correctly.
-    print("Expenses total: ",expenses_total)
-    print("ALL Purchased amount: ", LISTe)
-    spent_others = round((expenses_total - LISTe),2) # purchased but not included in DB (others)
-# correct total expenses: 3.551,25
-    #print("sepnt others: ",spent_others)
-    return spent_others
-    # expenses_total = addition(spent("food"),spent("shopping"),spent_investment()) # excluding bills
-    # #
-    #
-    # #
-    #
-    # print("expenses total: ",expenses_total)
-    #amount_spent_li_ot = round(LISTe - expenses_total,2)
-    # #print("LISTe: ",LISTe)
-    #
-    #print("amount_spent_li_ot: ",amount_spent_li_ot)
-    # return amount_spent_li_ot
+    :return: Other amounts inside purchases, not included yet in DB
+    '''
+    all_purchase = all_purchases()
+    food = sp_food()
+    shopping = sp_shopping()
+    liesure = sp_liesure()
+    spent_all = addition(food,shopping,liesure)
+    spent_others = round(addition(-all_purchase,spent_all),2) # - at the beginin is to convert negaitve amount to positive.
+    return -spent_others,all_purchase,food,liesure,spent_all # returning with - at the begining o mark it's an expense. Other values are used in all_expenses function.
+
+def sp_credit():
+    spent_credit = sum(amount_catch(script.credit))
+    return spent_credit
+
+def sp_credit_card():
+    spent_credit_card = sum(amount_catch(script.credit_card_no))
+    return spent_credit_card
+
+def all_expenses():
+    '''
+
+    :return: All expenses; purchases, bills, rents, investment, credits, credit cards etc.
+    '''
+    expenses = addition(sp_others()[4],sp_others()[0]) # Expenses food, shopping,liesure, others
+    expenses_total = addition(expenses,rent_income(script.loyer)[0],sp_investment(),sp_telecom(),sp_electricty(),sp_insurance(),sp_atm_withdrawls(),
+                              sp_credit(),sp_credit_card())
+    #print(expenses_total)
+    return expenses_total
 
 ########## Income /exp balance
+@amount_retriever
+def amount_pattern(pattern):
+    '''
+
+    :param pattern: Anything yoy want to search under operations column
+    :return: operation name, amount
+    '''
+    res = 'Operation'
+    return res, pattern
 @amount_retriever
 def sale(sale_data='SALE'):
     '''
@@ -246,38 +304,15 @@ def addition(*args):
     for i in args:
         res += i
     return res
-#spent_liesure_others()
+
 def monthly_spent():
     '''
     return only expenses. Without investment amount.
     others = all PURCHASEd items - (shopping + food)
     '''
-
-    others = spent_liesure_others()
-
-    expenses_total = round(addition(spent("food"),spent("shopping"),others,rent_income(script.loyer)[0],spent("telecom"),spent("electricity"),spent('liesure'),
-                                     sum(amount_catch(script.credit)),sum(amount_catch(script.credit_card_no)),
-                                    spent('insurance'),spent_investment()),2)
-    print("expenses_total_me: ",expenses_total)
-    print("rounded expenses: ", round(expenses_total),2)
-    print("food: ", spent("food"))
-    print("shopping: ", spent("shopping"))
-    print("investment: ", spent_investment())
-    print("lieuure: ", spent("liesure"))
-    print("other: ",others)
-    print("rent_income: ",rent_income(script.loyer)[0])
-    print("telecom: ",spent("telecom"))
-    print("electricty: ", spent("electricity"))
-    print("credit: ",sum(amount_catch(script.credit)))
-    print("Credit card: ", sum(amount_catch(script.credit_card_no)))
-    print("insurance: ",spent("insurance"))
-
-    #credit=sum(amount_catch(script.credit))
-    #credit_card=sum(amount_catch(script.credit_card_no))
-
     income = sum(amount_catch(script.employer)) + sum(sale('SALE')) + rent_income(script.loyer)[1] + sum(amount_catch(script.remobourse_cns))
     income = round(income,2)
-    balance = round(income - (-expenses_total),2)
+    balance = round(income - (-all_expenses()),2) # all_expenses has - to convert negative value to positive.
 
-    return income,balance,expenses_total
+    return income,balance
 

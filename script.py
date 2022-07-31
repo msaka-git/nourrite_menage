@@ -22,8 +22,8 @@ credit_card_no = config['personal_data']['credit_card_no']
 ########## END Configuration ########################
 
 ########## LOCAL VARIABLES ##########################
-employer = "CTG LUXEMBOURG"
-#employer = "PROXIMUS LUXEMBOURG SA"
+#employer = "CTG LUXEMBOURG"
+employer = "PROXIMUS LUXEMBOURG SA"
 remobourse_cns = "CNS-MALADIE REMBOURSEMENT"
 loyer = "Loyer"
 credit = "NISSAN"
@@ -193,21 +193,19 @@ if __name__ == '__main__':
             print(" ")
         elif ans == "3":
             monthly=dbn.monthly_spent()
-            print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',sum(dbn.amount_catch(employer)),
-                  'Earned amounts: ',*dbn.amount_catch(employer),dbn.rent_income(loyer)[1],f'{style.RESET}')
+
+            print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',sum(dbn.amount_catch(employer)),f'{style.RESET}',
+                  'Earned amounts: ',f'{fore.GREEN}',*dbn.amount_catch(employer),dbn.rent_income(loyer)[1],f'{style.RESET}')
             print_colorfull('red',"Rent: ",fonction=dbn.rent_income(loyer)[0])
-            print(f"Credit Total: {fore.RED} ",round(dbn.addition(*dbn.amount_catch(credit)),2),f'{style.RESET}',
-                f'{fore.RED}',*dbn.amount_catch(credit),f'{style.RESET}')
-            print(f"Credit Card Repayment: {fore.RED} ", round(dbn.addition(*dbn.amount_catch(credit_card_no)),2),f'{style.RESET}',
-                  f'{fore.RED}',*dbn.amount_catch(credit_card_no),f'{style.RESET}')
-            print(f"Bills (Telecom + electricity): {fore.RED}", dbn.addition(*dbn.amount_catch(*dbn.sql_queries("telecom")),*dbn.amount_catch(*dbn.sql_queries("electricity")))
-                  ,f"{style.RESET}")
-            print_colorfull('red',"Insurance: ",fonction=dbn.spent('insurance'))
-            print_colorfull('red',"Total Expenses: ",fonction=monthly[2])
+            print(f"Credit Total: {fore.RED} ",dbn.sp_credit(),f'{style.RESET}')
+            print(f"Credit Card Repayment: {fore.RED} ", dbn.sp_credit_card(),f'{style.RESET}')
+            print(f"Bills (Telecom + electricity): {fore.RED}", dbn.addition(dbn.sp_telecom(),dbn.sp_electricty()),f"{style.RESET}")
+            print_colorfull('red',"Insurance: ",fonction=dbn.sp_insurance())
+            print_colorfull('red',"Total Expenses: ",fonction=dbn.all_expenses())
             print(f'Balance: {fore.GREEN}',monthly[1] if monthly[1] >= 0 else f'{fore.RED}'"{}".format(monthly[1]),f'{style.RESET}')
             menu_save('balance_yearly',monthly[0],sum(dbn.amount_catch(employer)),dbn.rent_income(loyer)[0],
-                      round(dbn.addition(*dbn.amount_catch(credit)),2),round(dbn.addition(*dbn.amount_catch(credit_card_no)),2),
-                      round(dbn.addition(dbn.spent('telecom'),dbn.spent('electricity'))),dbn.spent('insurance'),monthly[1],monthly[2])
+                      dbn.sp_credit(),dbn.sp_credit_card(),dbn.addition(dbn.sp_telecom(),dbn.sp_electricty()),dbn.sp_insurance(),
+                      monthly[1],dbn.all_expenses(),dbn.sp_investment())
         elif ans == "4":
             db_menu()
         elif ans == "5":
