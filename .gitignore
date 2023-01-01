@@ -3,3 +3,4 @@ test2.py
 venv/
 .idea/
 config.ini
+shared_mods/__pycache__/
