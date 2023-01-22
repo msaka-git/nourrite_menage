@@ -189,6 +189,8 @@ if __name__ == '__main__':
             print(" ")
         elif ans == "3":
             monthly=dbn.monthly_spent()
+            print("Yearly (1) or Monthly (2)?")
+            choice = int(input())
 
             print(f'Income: {fore.GREEN}',monthly[0],f'{style.RESET}'+'-',f'Salary: {fore.GREEN}',sum(dbn.amount_catch(employer)),f'{style.RESET}',
                   'Earned amounts: ',f'{fore.GREEN}',*dbn.amount_catch(employer),dbn.rent_income(loyer)[1],f'{style.RESET}')
@@ -199,7 +201,8 @@ if __name__ == '__main__':
             print_colorfull('red',"Insurance: ",fonction=dbn.sp_insurance())
             print_colorfull('red',"Total Expenses: ",fonction=dbn.all_expenses())
             print(f'Balance: {fore.GREEN}',monthly[1] if monthly[1] >= 0 else f'{fore.RED}'"{}".format(monthly[1]),f'{style.RESET}')
-            menu_save('balance_yearly',monthly[0],sum(dbn.amount_catch(employer)),dbn.rent_income(loyer)[0],
+            if choice == 1:
+                menu_save('balance_yearly',monthly[0],sum(dbn.amount_catch(employer)),dbn.rent_income(loyer)[0],
                       dbn.sp_credit(),dbn.sp_credit_card(),dbn.addition(dbn.sp_telecom(),dbn.sp_electricty()),dbn.sp_insurance(),
                       monthly[1],dbn.all_expenses(),dbn.sp_investment())
         elif ans == "4":
